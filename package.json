@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "jsdom": "^30.0.1"
+  },
+  "devDependencies": {
+    "wrangler": "^4.125.0"
+  },
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "preview": "wrangler dev"
+  }
+}

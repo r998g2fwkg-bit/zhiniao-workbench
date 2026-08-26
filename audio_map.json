@@ -1,0 +1,351 @@
+{
+  "MacBook Neo\n常见问题 (202603)": {
+    "file": "MacBook Neo常见问题 (202603).mp3",
+    "segments": [
+      {
+        "start": 0.0,
+        "end": 0.85,
+        "role": "female",
+        "rowId": "0118",
+        "text": "MacBook Neo 是专为学生设计的吗？",
+        "type": "qa"
+      },
+      {
+        "start": 0.86,
+        "end": 3.15,
+        "role": "male",
+        "rowId": "0118",
+        "text": "MacBook Neo 的受众包括但不限于学生。\n如果用户需要一台价格亲民、品质卓越的笔记本, 能轻松搞定日常使用, 比如上网、处理文档、在线追剧等等, 那么 MacBook Neo 是理想选择。",
+        "type": "qa"
+      },
+      {
+        "start": 3.25,
+        "end": 3.78,
+        "role": "female",
+        "rowId": "0119",
+        "text": "MacBook Neo 用上一代手机的芯片, 性能够吗？",
+        "type": "qa"
+      },
+      {
+        "start": 4.11,
+        "end": 4.62,
+        "role": "male",
+        "rowId": "0119",
+        "text": "现在A 系列芯片的处理能力并不逊色, 随着中央处理器、图形处理器和16核神经网络引擎的不断进化, A18 Pro 可以满足用户所需：无论是流畅处理日常事务、快速切换各类 apps, 还是玩转创意项目, 或是驱动App内的AI功能, 都不在话下。\n  对于学生、轻办公, 处理日常文档、表格、PPT等, 这样的使用场景, 完全够用了, 而且极具性价比。\n  当然, 对于追求更强性能、更大的屏幕和更多能力的用户来说, 搭载M5芯片的 MacBook Air 是一个绝佳选择。",
+        "type": "qa"
+      },
+      {
+        "start": 4.64,
+        "end": 5.18,
+        "role": "female",
+        "rowId": "0120",
+        "text": "MacBook Neo 和同级别 PC相比, 有什么优势？",
+        "type": "qa"
+      },
+      {
+        "start": 5.2,
+        "end": 5.71,
+        "role": "male",
+        "rowId": "0120",
+        "text": "MacBook Neo 是一款独一无二的产品。\n  它采用精美耐用的铝金属设计, 拥有四种活泼的颜色。从屏幕、键盘、触控板, 到摄像头、扬声器和麦克风, 样样都与同价位产品不同, 体验更出众。\n  它由 Apple 芯片驱动, 可以做到开盖即用、快速唤醒, 续航最长可达16小时。\n  它搭载的 macOS 系统安全又稳定。如果你有其他Apple 产品, 比如iPhone, 还能体验Apple 生态系统带来的便利。\n  所以 MacBook Neo 是同价位中的优选。",
+        "type": "qa"
+      },
+      {
+        "start": 5.81,
+        "end": 6.22,
+        "role": "female",
+        "rowId": "",
+        "text": "",
+        "type": "extra"
+      },
+      {
+        "start": 6.8,
+        "end": 8.58,
+        "role": "male",
+        "rowId": "",
+        "text": "",
+        "type": "extra"
+      },
+      {
+        "start": 8.59,
+        "end": 9.14,
+        "role": "female",
+        "rowId": "",
+        "text": "",
+        "type": "extra"
+      },
+      {
+        "start": 9.15,
+        "end": 10.86,
+        "role": "male",
+        "rowId": "",
+        "text": "",
+        "type": "extra"
+      },
+      {
+        "start": 12.45,
+        "end": 13.73,
+        "role": "male",
+        "rowId": "",
+        "text": "",
+        "type": "extra"
+      },
+      {
+        "start": 13.84,
+        "end": 15.41,
+        "role": "female",
+        "rowId": "",
+        "text": "",
+        "type": "extra"
+      },
+      {
+        "start": 15.42,
+        "end": 26.53,
+        "role": "male",
+        "rowId": "",
+        "text": "",
+        "type": "extra"
+      },
+      {
+        "start": 26.54,
+        "end": 27.76,
+        "role": "female",
+        "rowId": "",
+        "text": "",
+        "type": "extra"
+      },
+      {
+        "start": 27.78,
+        "end": 31.41,
+        "role": "male",
+        "rowId": "",
+        "text": "",
+        "type": "extra"
+      },
+      {
+        "start": 31.42,
+        "end": 32.0,
+        "role": "female",
+        "rowId": "",
+        "text": "",
+        "type": "extra"
+      },
+      {
+        "start": 32.02,
+        "end": 33.79,
+        "role": "male",
+        "rowId": "",
+        "text": "",
+        "type": "extra"
+      },
+      {
+        "start": 33.81,
+        "end": 34.22,
+        "role": "female",
+        "rowId": "",
+        "text": "",
+        "type": "extra"
+      },
+      {
+        "start": 34.24,
+        "end": 34.91,
+        "role": "male",
+        "rowId": "",
+        "text": "",
+        "type": "extra"
+      },
+      {
+        "start": 34.93,
+        "end": 38.62,
+        "role": "female",
+        "rowId": "",
+        "text": "",
+        "type": "extra"
+      },
+      {
+        "start": 38.99,
+        "end": 44.78,
+        "role": "male",
+        "rowId": "",
+        "text": "",
+        "type": "extra"
+      },
+      {
+        "start": 44.8,
+        "end": 45.26,
+        "role": "female",
+        "rowId": "",
+        "text": "",
+        "type": "extra"
+      },
+      {
+        "start": 45.28,
+        "end": 49.31,
+        "role": "male",
+        "rowId": "",
+        "text": "",
+        "type": "extra"
+      },
+      {
+        "start": 50.26,
+        "end": 50.67,
+        "role": "female",
+        "rowId": "",
+        "text": "",
+        "type": "extra"
+      },
+      {
+        "start": 51.36,
+        "end": 52.02,
+        "role": "male",
+        "rowId": "",
+        "text": "",
+        "type": "extra"
+      },
+      {
+        "start": 52.03,
+        "end": 54.29,
+        "role": "female",
+        "rowId": "",
+        "text": "",
+        "type": "extra"
+      },
+      {
+        "start": 54.98,
+        "end": 55.44,
+        "role": "male",
+        "rowId": "",
+        "text": "",
+        "type": "extra"
+      },
+      {
+        "start": 55.46,
+        "end": 57.5,
+        "role": "female",
+        "rowId": "",
+        "text": "",
+        "type": "extra"
+      },
+      {
+        "start": 57.52,
+        "end": 59.57,
+        "role": "male",
+        "rowId": "",
+        "text": "",
+        "type": "extra"
+      },
+      {
+        "start": 59.58,
+        "end": 62.94,
+        "role": "female",
+        "rowId": "",
+        "text": "",
+        "type": "extra"
+      },
+      {
+        "start": 63.7,
+        "end": 64.83,
+        "role": "male",
+        "rowId": "",
+        "text": "",
+        "type": "extra"
+      },
+      {
+        "start": 66.19,
+        "end": 66.75,
+        "role": "female",
+        "rowId": "",
+        "text": "",
+        "type": "extra"
+      },
+      {
+        "start": 66.77,
+        "end": 69.34,
+        "role": "male",
+        "rowId": "",
+        "text": "",
+        "type": "extra"
+      },
+      {
+        "start": 69.36,
+        "end": 69.89,
+        "role": "female",
+        "rowId": "",
+        "text": "",
+        "type": "extra"
+      },
+      {
+        "start": 69.9,
+        "end": 75.44,
+        "role": "male",
+        "rowId": "",
+        "text": "",
+        "type": "extra"
+      },
+      {
+        "start": 75.46,
+        "end": 76.74,
+        "role": "female",
+        "rowId": "",
+        "text": "",
+        "type": "extra"
+      },
+      {
+        "start": 76.85,
+        "end": 78.42,
+        "role": "male",
+        "rowId": "",
+        "text": "",
+        "type": "extra"
+      },
+      {
+        "start": 78.43,
+        "end": 78.98,
+        "role": "female",
+        "rowId": "",
+        "text": "",
+        "type": "extra"
+      },
+      {
+        "start": 79.49,
+        "end": 80.5,
+        "role": "male",
+        "rowId": "",
+        "text": "",
+        "type": "extra"
+      },
+      {
+        "start": 81.87,
+        "end": 82.43,
+        "role": "female",
+        "rowId": "",
+        "text": "",
+        "type": "extra"
+      },
+      {
+        "start": 82.45,
+        "end": 84.14,
+        "role": "male",
+        "rowId": "",
+        "text": "",
+        "type": "extra"
+      },
+      {
+        "start": 84.66,
+        "end": 85.44,
+        "role": "female",
+        "rowId": "",
+        "text": "",
+        "type": "extra"
+      },
+      {
+        "start": 85.46,
+        "end": 86.45,
+        "role": "male",
+        "rowId": "",
+        "text": "",
+        "type": "extra"
+      }
+    ]
+  }
+}

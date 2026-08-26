@@ -1,0 +1,47 @@
+sequenceDiagram
+    autonumber
+    actor U as 用户
+    participant IM as renderExamImport
+    participant SY as examSyncImportState
+    participant OCR as examRunOCR
+    participant LD as examLoadOCR
+    participant W as Tesseract Worker
+    participant CL as examCleanOCR
+    participant TA as examPaste 文本框
+    participant PS as examDoParse
+    participant MA as examMatchAll
+    participant RL as renderExamList
+
+    U->>IM: 进入月考版块
+    IM->>SY: 同步按钮态（examType 为空 → 禁用）
+    U->>IM: 点击 chip「AiCoach」
+    IM->>IM: examType='coach' + saveExamType
+    IM->>SY: 解禁「解析」「上传截图识别」
+
+    U->>OCR: 点「上传截图识别」→ 选中 M 张图
+    OCR->>LD: 懒加载 Tesseract（12s 超时）
+    LD-->>OCR: Tesseract
+    OCR->>W: createWorker('chi_sim') 全程仅一次
+    loop i = 1..M 串行
+        OCR->>OCR: 进度「识别第 i/M 张…」
+        OCR->>W: recognize(files[i])
+        alt 成功
+            W-->>OCR: rawText
+            OCR->>CL: examCleanOCR(rawText, 'coach')
+            CL-->>OCR: cleanText（含回退护栏）
+        else 失败
+            W-->>OCR: error → 记入 failed[]，继续下一张
+        end
+    end
+    OCR->>W: terminate()（finally 保证执行）
+    OCR->>TA: 各张结果以空行分隔追加
+    OCR->>TA: saveExamPaste
+    OCR-->>U: toast「识别完成 X/M 张，请校对后解析」
+
+    U->>PS: 点「解析并调出题目」
+    PS->>PS: 类型守卫：examType 非空
+    PS->>MA: examMatchAll(lines, 'coach')
+    MA->>MA: 仅构建 examCoachPool()（单池）
+    MA-->>PS: 去重 + 重排后的 examQuestions
+    PS->>RL: examStage='list' → 渲染核对清单
+    RL-->>U: 清单（序号 / 类型 / 标题 / 模糊 / 冲突提示）

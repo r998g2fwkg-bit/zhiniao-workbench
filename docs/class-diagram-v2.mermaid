@@ -1,0 +1,85 @@
+classDiagram
+    class ExamState {
+        +string examType
+        +Array examQuestions
+        +string examStage
+        +number examLastDup
+        +string examOcrState
+        +number examOcrTotal
+        +number examOcrIndex
+        +boolean examAutoParsed
+    }
+
+    class ExamQuestion {
+        +number order
+        +number seq
+        +number srcSeq
+        +string raw
+        +string text
+        +string hintType
+        +boolean hintConflict
+        +string type
+        +string matchedId
+        +string matchedKey
+        +object matchedEntry
+        +number score
+    }
+
+    class CoachPoolItem {
+        +string key
+        +string sheet
+        +string topic
+        +string category
+        +Array items
+    }
+
+    class DemoPoolItem {
+        +string key
+        +object entry
+    }
+
+    class ExamStorage {
+        +K_EXAM_TYPE
+        +K_EXAM_PASTE
+        +K_EXAM_REMOVED
+        +K_EXAM_CONFIRMED
+        +K_EXAM_DONE
+        +loadExamType()
+        +saveExamType(t)
+        +examPasteSig(raw)
+        +examClearSession()
+    }
+
+    class OcrPipeline {
+        +examRunOCR(files)
+        +examLoadOCR()
+        +examCleanOCR(raw, type)
+    }
+
+    class MatchEngine {
+        +examMatchAll(list, type)
+        +examMatchOne(q, pools, type)
+        +examMatchInPool(pool, normQ, type)
+        +examPoolOf(type)
+    }
+
+    class RenderLayer {
+        +renderExamImport()
+        +examSyncImportState()
+        +renderExamList()
+        +renderExamCards()
+        +renderExamSummary()
+        +renderExamNav()
+    }
+
+    ExamState "1" o-- "0..*" ExamQuestion : holds
+    MatchEngine ..> CoachPoolItem : builds when coach
+    MatchEngine ..> DemoPoolItem : builds when demo
+    ExamQuestion --> CoachPoolItem : matchedEntry when coach
+    ExamQuestion --> DemoPoolItem : matchedEntry when demo
+    OcrPipeline ..> ExamStorage : writes K_EXAM_PASTE
+    MatchEngine ..> ExamState : reads examType
+    ExamStorage ..> ExamState : hydrate on render
+    RenderLayer ..> ExamState : reads
+    RenderLayer ..> MatchEngine : triggers parse
+    RenderLayer ..> OcrPipeline : triggers OCR

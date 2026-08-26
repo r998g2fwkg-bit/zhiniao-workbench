@@ -1,0 +1,20 @@
+{
+  "$schema": "https://static.cloudbase.net/cli/cloudbaserc.schema.json",
+  "envId": "zhiniao-d9goc0ztofee3fad2",
+  "functionRoot": "./functions",
+  "functions": [
+    {
+      "name": "api",
+      "type": "HTTP",
+      "timeout": 10,
+      "runtime": "Nodejs20.19",
+      "memorySize": 256,
+      "installDependency": true,
+      "httpTrigger": {
+        "path": "/api/*",
+        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        "authType": "OPEN"
+      }
+    }
+  ]
+}

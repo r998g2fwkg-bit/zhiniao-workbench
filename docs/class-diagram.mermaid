@@ -1,0 +1,119 @@
+classDiagram
+    class ExamQuestion {
+        +number order
+        +number seq
+        +number|null srcSeq
+        +string raw
+        +string text
+        +string|null hintType
+        +boolean hintStrong
+        +number dupCount
+        +string[] dupRaws
+        +string type
+        +string matchedId
+        +string matchedKey
+        +object matchedEntry
+        +number score
+        +boolean ambiguous
+    }
+
+    class ExamState {
+        +ExamQuestion[] examQuestions
+        +string examStage
+        +string examOcrState
+        +boolean examAutoParsed
+        +Set~string~ examRemovedKeys
+    }
+
+    class ExamParser {
+        +examNorm(s) string
+        +examFold(s) string
+        +examSeqOf(line) number
+        +examStripSeq(line) string
+        +examDetectHint(text) HintResult
+        +examParseLines(raw) ExamQuestion[]
+    }
+
+    class ExamMatcher {
+        +EXAM_DICE_MIN number
+        +EXAM_CONTAIN_RATIO number
+        +examDice(a, b) number
+        +examCoachPool() CoachEntry[]
+        +examDemoPool() DemoEntry[]
+        +examMatchInPool(pool, normQ, foldQ, type) MatchHit
+        +examMatchOne(q, pools) ExamQuestion
+        +examMatchAll(list) ExamQuestion[]
+    }
+
+    class ExamDedup {
+        +examQKey(q) string
+        +examDedupeMatched(list) ExamQuestion[]
+        +examReindex(list) ExamQuestion[]
+    }
+
+    class ExamStore {
+        +loadExamPaste() string
+        +saveExamPaste(v) void
+        +loadExamDone() DoneMap
+        +saveExamDone(map) void
+        +examPasteSig(raw) string
+        +loadExamStage() StageRec
+        +saveExamStage(stage) void
+        +loadExamRemoved() string[]
+        +saveExamRemoved(keys) void
+    }
+
+    class ExamListView {
+        +examListRowHTML(q) string
+        +renderExamList() void
+        +bindExamListEvents() void
+        +examRemoveQuestion(order) void
+        +examRestoreRemoved() void
+    }
+
+    class ExamCardView {
+        +examCoachCardHTML(q) string
+        +examDemoCardHTML(q) string
+        +examMissHTML(list) string
+        +renderExamCards() void
+        +bindExamCardEvents() void
+    }
+
+    class ExamController {
+        +examDoParse(silent) void
+        +examSetStage(stage, opts) void
+        +renderExamStage() void
+        +renderExam() void
+        +renderExamSummary() void
+        +renderExamNav() void
+        +renderExamImport() void
+    }
+
+    class CoachEntry {
+        +string key
+        +string sheet
+        +string topic
+        +string category
+        +Item[] items
+    }
+
+    class DemoEntry {
+        +string key
+        +object entry
+    }
+
+    ExamController --> ExamParser : 解析
+    ExamController --> ExamMatcher : 匹配
+    ExamMatcher --> ExamDedup : 去重重排
+    ExamController --> ExamStore : 持久化
+    ExamController --> ExamListView : stage=list
+    ExamController --> ExamCardView : stage=cards
+    ExamState "1" o-- "N" ExamQuestion : 持有
+    ExamListView ..> ExamState : 读写
+    ExamCardView ..> ExamState : 读
+    ExamMatcher ..> CoachEntry : 候选池
+    ExamMatcher ..> DemoEntry : 候选池
+    ExamQuestion ..> CoachEntry : matchedEntry(coach)
+    ExamQuestion ..> DemoEntry : matchedEntry(demo)
+    ExamListView --> ExamCardView : 确认并展开
+    ExamCardView --> ExamListView : 返回清单核对

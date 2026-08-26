@@ -1,0 +1,2482 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Coach 激励计算器 · 多月份 KPI 版</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background-color: #f5f5f7;
+            font-family: -apple-system, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', Helvetica, sans-serif;
+            color: #1d1c1f; padding: 2rem 1.5rem;
+            -webkit-font-smoothing: antialiased;
+        }
+        .container { max-width: 1500px; margin: 0 auto; }
+
+        /* Hero */
+        .hero { margin-bottom: 1.5rem; text-align: left; display:flex; align-items:center; gap:12px; flex-wrap:wrap;}
+        .hero h1 {
+            font-size: 2rem; font-weight: 600; letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #1c1c1e 0%, #3a3a44 100%);
+            background-clip: text; -webkit-background-clip: text; color: transparent;
+        }
+        .version-tag {
+            background: #007aff; color: white;
+            font-size: 0.7rem; padding: 3px 10px; border-radius: 12px;
+            font-weight: 500; vertical-align: middle;
+        }
+        .hero-sub {
+            width:100%; font-size: 0.88rem; color: #6e6e73;
+            border-left: 3px solid #007aff; padding-left: 12px; margin-top: 4px;
+        }
+
+        /* ========== 门店客流看板 ========== */
+        .store-dashboard { margin-bottom: 28px; }
+        .sd-header {
+            display:flex; justify-content:space-between; align-items:center;
+            margin-bottom:16px; flex-wrap:wrap; gap:12px;
+        }
+        .sd-title { font-size:1.05rem; font-weight:600; display:flex; align-items:center; gap:8px; }
+        .sd-filters { display:flex; gap:8px; flex-wrap:wrap; }
+        .flow-filter-btn {
+            padding:6px 14px; border-radius:20px; font-size:0.75rem; font-weight:500;
+            cursor:pointer; border:none; transition:all 0.2s; background:#f2f2f5; color:#555;
+        }
+        .flow-filter-btn.active { box-shadow: 0 0 0 2px currentColor; transform:scale(1.02); }
+        .flow-filter-btn[data-flow="3500+"].active{ background:#e8f4fd; color:#007aff; }
+        .flow-filter-btn[data-flow="2000-3500"].active{ background:#eafbea; color:#1c7e4d; }
+        .flow-filter-btn[data-flow="1200-2000"].active{ background:#fef6e9; color:#c97e0a; }
+        .flow-filter-btn[data-flow="1200-"].active{ background:#ffe9e9; color:#c04040; }
+        .flow-filter-btn[data-flow="ALL"].active{ background:#f2f2f5; color:#1c1c1e; }
+
+        .sd-grid {
+            display:grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap:10px;
+        }
+        .store-card {
+            background:#fff; border-radius:18px; padding:12px 14px;
+            border:1.5px solid transparent; cursor:pointer; transition:all 0.25s;
+            position:relative; overflow:hidden;
+        }
+        .store-card:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(0,0,0,0.08); }
+        .store-card.selected { border-color:#007aff; background:#f0f7ff; }
+
+        .sc-flow-tag {
+            position:absolute; top:0; left:0; right:0;
+            height:4px; border-radius:18px 18px 0 0;
+        }
+        .sc-flow-3500p  { background:linear-gradient(90deg,#007aff,#5ac8fa); }    /* 蓝色 3500+ */
+        .sc-flow-2000m  { background:linear-gradient(90deg,#34c759,#30d158); }   /* 绿色 2000-3500 */
+        .sc-flow-1200m  { background:linear-gradient(90deg,#ff9f0a,#ffcc00); }   /* 橙色 1200-2000 */
+        .sc-flow-1200l  { background:linear-gradient(90deg,#ff3b30,#ff453a); }   /* 红色 1200以下 */
+
+        .sc-name { font-weight:600; font-size:0.82rem; margin-bottom:4px; line-height:1.3; }
+        .sc-meta { display:flex; justify-content:space-between; align-items:center; font-size:0.68rem; color:#888; }
+        .sc-target { background:#f5f5f7; padding:2px 8px; border-radius:10px; font-weight:600; color:#333; font-size:0.72rem; }
+        .sc-flow-label { font-weight:500; padding:1px 6px; border-radius:8px; font-size:0.62rem; }
+        .fl-3500p { background:#eef6fc; color:#0066cc; }
+        .fl-2000m { background:#eef9f0; color:#1a7a37; }
+        .fl-1200m { background:#fff8ee; color:#b36d08; }
+        .fl-1200l { background:#ffeeed; color:#c0392b; }
+
+        .sd-summary {
+            display:flex; gap:16px; margin-top:14px; flex-wrap:wrap;
+        }
+        .sd-stat {
+            flex:1; min-width:130px; background:white; border-radius:16px;
+            padding:12px 16px; text-align:center;
+        }
+        .sd-stat-val { font-size:1.4rem; font-weight:700; }
+        .sd-stat-lbl { font-size:0.7rem; color:#888; margin-top:2px; }
+
+        /* Main dashboard layout */
+        .dashboard { display: flex; flex-wrap: wrap; gap: 28px; }
+        .card {
+            background: #ffffff; border-radius: 32px;
+            box-shadow: 0 8px 28px rgba(0,0,0,0.04), 0 0 0 0.5px rgba(0,0,0,0.02);
+            overflow: hidden;
+        }
+        .left-panel { flex: 1.3; min-width: 300px; }
+        .right-panel { flex: 2.2; min-width: 400px; }
+
+        .card-header {
+            padding: 1.2rem 1.5rem 0.6rem; font-weight: 590; font-size: 1.1rem;
+            border-bottom: 1px solid #e9e9ef; background: #ffffff;
+        }
+        .card-content { padding: 1.25rem 1.5rem 1.5rem; }
+
+        .select-modern {
+            width:100%; padding:12px 16px; border-radius:14px;
+            border:1px solid #d9d9df; background:#fff; font-size:0.9rem;
+            appearance:none;
+            background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238e8e93' stroke-width='2'><polyline points='6 9 12 15 18 9'></polyline></svg>");
+            background-repeat:no-repeat; background-position:right 16px center; cursor:pointer;
+        }
+        .select-modern:focus{ outline:none; border-color:#007aff; }
+
+        .slider-label{ display:flex; justify-content:space-between; font-weight:500; font-size:0.85rem; margin-bottom:6px; }
+        input[type="range"]{
+            width:100%; height:4px; border-radius:20px; background:#e5e5ea;
+            -webkit-appearance:none;
+        }
+        input[type="range"]::-webkit-slider-thumb{
+            -webkit-appearance:none; width:18px; height:18px;
+            background:#007aff; border-radius:50%; cursor:pointer;
+        }
+        .value-input{ width:80px; padding:8px 0; text-align:center; border-radius:12px; border:1px solid #e4e4e8; background:#fbfbfd; }
+
+        /* 暗访系数芯片 */
+        .mystery-grid{ display:flex; gap:8px; margin-top:8px; flex-wrap:wrap; }
+        .mystery-chip{
+            flex:1; min-width:90px; background:#f2f2f5; padding:10px 4px;
+            text-align:center; border-radius:16px; font-size:0.72rem;
+            font-weight:500; cursor:pointer; transition:all 0.2s;
+        }
+        .mystery-chip.selected{ background:#007aff; color:white; box-shadow:0 2px 8px rgba(0,122,255,0.2); }
+
+        /* 绩效模块块 */
+        .perf-block{ background:#f9f9fb; border-radius:24px; padding:1rem 1.2rem; margin-bottom:1.2rem; }
+        .perf-score-badge{ display:none; margin:0 0 0.9rem; padding:0.55rem 0.8rem; border-radius:14px; background:#eef4ff; border:1px solid #cfe0ff; font-size:0.82rem; color:#1d3a6b; line-height:1.55;}
+        .perf-score-badge.active b{ color:#0a5bd6; }
+        input[type=checkbox]:disabled{ opacity:0.4; cursor:not-allowed; }
+        .perf-block-title{
+            font-weight:600; font-size:0.88rem; margin-bottom:8px;
+            display:flex; align-items:center; gap:6px;
+        }
+        .perf-block-title .pct-badge{
+            font-size:0.7rem; background:#eef2fe; color:#007aff;
+            padding:2px 8px; border-radius:10px; font-weight:500;
+        }
+        .perf-block-title .amt-badge{
+            font-size:0.7rem; background:#eef6f0; color:#1c7e4d;
+            padding:2px 8px; border-radius:10px; font-weight:500;
+        }
+        .toggle-row{ display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid #e9e9ef; }
+        .toggle-row:last-child{ border-bottom:none; }
+        .week-group{ display:flex; gap:10px; margin-top:6px; }
+        .week-check{
+            display:flex; align-items:center; gap:4px; font-size:0.68rem;
+            background:#fff; padding:3px 9px; border-radius:30px;
+            border:0.5px solid #e4e4e8;
+        }
+        .score-badge{ font-weight:600; color:#1c7e4d; background:#eef6f0; padding:3px 10px; border-radius:40px; font-size:0.8rem; }
+        .sub-item-label{ font-size:0.78rem; color:#555; padding-left:8px; }
+
+        .calc-row{ display:flex; justify-content:space-between; padding:10px 0; font-size:0.88rem; border-bottom:1px dashed #efeff4; }
+        .net-card{ background:#eef6f0; border-radius:24px; padding:18px 20px; text-align:center; margin:20px 0 12px; }
+        .net-card span{ font-size:2rem; font-weight:700; color:#1c7e4d; }
+        .reset-button{ background:#fff; border:1px solid #d9d9df; border-radius:40px; padding:10px; width:100%; font-weight:500; cursor:pointer; }
+        .footnote{ font-size:0.7rem; color:#8e8e93; text-align:center; margin-top:20px; }
+
+        /* 项目红线标注 */
+        .red-note{
+            font-size:0.72rem; color:#c04040; background:#ffe9e9;
+            border-radius:12px; padding:8px 12px; margin:8px 0; line-height:1.5;
+        }
+
+        /* ========== 客流→课时自动匹配 ========== */
+        .flow-matcher{ background:#f0f7ff; border:1px solid #cfe3ff; border-radius:20px; padding:14px 16px; margin:1rem 0; }
+        .flow-matcher .slider-label{ margin-bottom:8px; }
+        .flow-match-result{ display:flex; align-items:center; gap:10px; margin-top:10px; font-size:0.95rem; flex-wrap:wrap; }
+        .fm-tier{ font-weight:600; padding:4px 12px; border-radius:20px; background:#007aff; color:#fff; font-size:0.82rem; }
+        .fm-arrow{ color:#888; font-size:1.1rem; }
+        .fm-hour{ font-weight:700; color:#1c1c1e; font-size:1.05rem; }
+        .flow-legend{ font-size:0.7rem; color:#6e6e73; margin-top:10px; line-height:1.7; background:#fff; border-radius:12px; padding:8px 10px; }
+        .flow-boundary{ font-size:0.72rem; color:#1c7e4d; margin-top:8px; min-height:1em; }
+
+        /* ========== 达成率×暗访分 速查表 ========== */
+        .lookup-table-wrap{ margin-top:1.4rem; }
+        .lookup-title{
+            font-size:0.82rem; font-weight:600; color:#1c1c1e;
+            display:flex; align-items:center; gap:6px; margin-bottom:10px;
+        }
+        .lookup-sub{ font-size:0.68rem; color:#8e8e93; font-weight:400; margin-left:auto; }
+        .lookup-grid{ display:flex; flex-direction:column; gap:3px; font-size:0.7rem; }
+        .lookup-row{ display:flex; gap:3px; align-items:center; }
+        .lookup-cell{
+            flex:1; text-align:center; padding:6px 2px;
+            border-radius:10px; background:#f5f5f7;
+            font-weight:500; color:#333; min-width:0;
+            transition:background 0.15s;
+        }
+        .lookup-cell:hover{ background:#e8e8ed; }
+        .lookup-header{ background:#e9e9ef; font-weight:700; font-size:0.65rem; color:#555; letter-spacing:-0.01em; }
+        .lookup-row-label{
+            width:44px; flex-shrink:0; text-align:center; font-weight:600;
+            font-size:0.72rem; color:#007aff; background:#f0f7ff;
+            border-radius:10px; padding:6px 0;
+        }
+        .lk-best{ background:#eef9f0 !important; color:#1a7a37 !important; font-weight:700 !important; }
+        .lk-worst{ background:#fff5f5 !important; color:#c0392b !important; font-weight:700 !important; }
+        .lk-mid{ background:#fefce8 !important; color:#996600 !important; }
+
+        /* ========== 课时达成速查表（分档表格）========== */
+        .al-wrap{ margin-top:1.4rem; }
+        .al-table{ width:100%; border-collapse:separate; border-spacing:0; font-size:0.72rem; }
+        .al-table th{
+            background:#e9e9ef; color:#555; font-weight:600; font-size:0.64rem;
+            padding:7px 2px; text-align:center; letter-spacing:-0.01em;
+        }
+        .al-table th:first-child{ border-radius:8px 0 0 0; }
+        .al-table th:last-child{ border-radius:0 8px 0 0; }
+        .al-table td{ padding:6px 2px; text-align:center; border-bottom:1px solid #f0f0f4; }
+        .al-table tr:last-child td{ border-bottom:none; }
+        .al-rate{ font-weight:600; }
+        .al-coach{ font-weight:600; color:#1c1c1e; }
+        .al-net{ font-weight:600; }
+        .al-bar{ height:4px; border-radius:3px; margin-top:3px; background:#e5e5ea; overflow:hidden; }
+        .al-bar-fill{ height:100%; border-radius:3px; transition:width 0.3s; }
+        /* 区间底色 */
+        .al-zone-0 td{ background:#fff5f5; }              /* <80% 系数0 */
+        .al-zone-80 td{ background:#fff8ee; }             /* 80~99% 门槛0.8 */
+        .al-zone-100 td{ background:#eef6f0; }            /* 100% 基准 */
+        .al-zone-100 .al-rate,.al-zone-100 .al-coach,.al-zone-100 .al-net{ font-weight:700; }
+        .al-zone-up td{ background:#f0f7ff; }             /* 101~129% 线性增长 */
+        .al-zone-cap td{ background:#eef9f0; }            /* 130% 封顶 */
+        .al-zone-cap .al-rate,.al-zone-cap .al-coach,.al-zone-cap .al-net{ font-weight:700; color:#1a7a37; }
+        .al-note{ font-size:0.64rem; color:#8e8e93; margin-top:8px; line-height:1.5; }
+        .al-gate{
+            font-size:0.66rem; color:#c97e0a; background:#fef6e9; border-radius:10px;
+            padding:5px 10px; margin-top:8px; text-align:center; font-weight:500;
+        }
+
+        /* ========== 课时差距规划器 ========== */
+        .gap-planner{ background:#f0f7ff; border:1px solid #cfe3ff; border-radius:20px; padding:14px 16px; margin:1rem 0; }
+        .gap-input-row{ display:flex; gap:10px; align-items:center; margin-bottom:12px; flex-wrap:wrap; }
+        .gap-current-rate{ font-size:0.76rem; font-weight:600; color:#007aff; }
+        .gap-headline{
+            margin:10px 0 12px; padding:14px 16px; border-radius:16px;
+            background:linear-gradient(135deg,#eef6ff 0%,#ffffff 100%); border:1px solid #d8e8ff;
+            font-size:0.86rem; color:#1c1c1e; line-height:1.6;
+        }
+        .gap-headline b{ color:#007aff; font-size:1.5rem; font-weight:700; font-variant-numeric:tabular-nums; letter-spacing:-0.01em; }
+        .gap-headline.gh-reached{ background:linear-gradient(135deg,#f0fff4 0%,#ffffff 100%); border-color:#bff5d0; }
+        .gap-headline.gh-reached b{ color:#1a7a37; }
+        .gap-headline.gh-empty{ color:#8e8e93; background:#f5f5f7; border-color:#e5e5ea; font-size:0.78rem; padding:10px 14px; }
+
+        /* ========== 区间定位器（10%阶梯·形象化） ========== */
+        .zone-locator{ margin:12px 0 4px; }
+        .zone-steps{ display:flex; gap:5px; align-items:flex-end; }
+        .zone-step{ flex:1; min-width:0; display:flex; flex-direction:column; align-items:center; }
+        .zone-mark{ font-size:0.58rem; font-weight:700; height:12px; line-height:12px; color:#bbb; margin-bottom:2px; text-align:center; }
+        .zone-bar{
+            width:100%; border-radius:9px 9px 4px 4px; display:flex; align-items:flex-start; justify-content:center;
+            padding-top:5px; font-size:0.62rem; font-weight:700; color:#fff; transition:all .25s;
+            background:var(--c,#ccc); opacity:0.22;
+        }
+        .zone-step.active .zone-bar{ opacity:1; transform:translateY(-3px); box-shadow:0 5px 12px -3px var(--c); }
+        .zone-step.active .zone-mark{ color:var(--c); }
+        .zone-range{ font-size:0.56rem; color:#888; margin-top:3px; font-weight:500; text-align:center; line-height:1.2; }
+        .zone-step.active .zone-range{ color:#1c1c1e; font-weight:700; }
+        .zone-badge{ margin-top:9px; font-size:0.8rem; color:#1c1c1e; background:#fff; border:1px solid #eef2f7; border-radius:12px; padding:9px 12px; line-height:1.5; }
+        .zone-badge b{ font-weight:700; font-variant-numeric:tabular-nums; }
+        .zone-badge .zone-rate{ color:#888; font-size:0.72rem; }
+        .zone-badge-empty{ color:#8e8e93; font-size:0.74rem; background:#f5f5f7; border-color:#e5e5ea; }
+        .slider-zone-badge{ margin-top:10px; font-size:0.8rem; background:#fff; border:1px solid #eef2f7; border-radius:12px; padding:9px 12px; line-height:1.55; }
+        .slider-zone-badge b{ font-weight:700; font-variant-numeric:tabular-nums; }
+        .slider-zone-badge .sz-thresh{ display:block; font-size:0.7rem; color:#888; margin-top:3px; }
+        .gap-milestones{ display:flex; gap:8px; }
+        .gap-ms{
+            flex:1; min-width:0; background:#fff; border-radius:16px; padding:10px 6px;
+            text-align:center; border:2px solid transparent; transition:all 0.2s;
+        }
+        .gap-ms-reached{ border-color:#34c759; background:#f0fff4; }
+        .gap-ms-title{ font-size:0.64rem; font-weight:600; margin-bottom:5px; }
+        .gap-ms-need{ font-size:0.74rem; font-weight:700; color:#1c1c1e; }
+        .gap-ms-diff{ font-size:0.66rem; margin-top:3px; font-weight:500; }
+        .gap-ms-diff-ok{ color:#1a7a37; }
+        .gap-ms-diff-bad{ color:#c0392b; }
+        .gap-ms-coach{ font-size:0.6rem; color:#888; margin-top:3px; }
+        .gap-ms-perday{ font-size:0.66rem; margin-top:4px; font-weight:600; color:#007aff; background:#eef4ff; border-radius:8px; padding:3px 8px; }
+        .gap-ms-perday-zero{ color:#c0392b; background:#fff0f0; }
+        .gap-summary{ font-size:0.74rem; font-weight:600; color:#007aff; margin-top:8px; background:#fff; border-radius:12px; padding:8px 12px; line-height:1.8; }
+
+        /* ========== 💰 到手工资 Hero（结果置顶） ========== */
+        .net-hero{
+            display:flex; justify-content:space-between; align-items:center;
+            padding:1.4rem 1.8rem; margin-bottom:1.5rem; gap:24px; flex-wrap:wrap;
+            background:linear-gradient(135deg,#ffffff 0%,#eef6ff 100%);
+            border:1px solid #d8e8ff;
+        }
+        .net-hero-main{ display:flex; flex-direction:column; }
+        .net-hero-label{ font-size:0.8rem; color:#6e6e73; font-weight:500; margin-bottom:4px; }
+        .net-hero-amount{
+            font-size:3.2rem; font-weight:700; letter-spacing:-0.03em; line-height:1;
+            background:linear-gradient(135deg,#1c7e4d 0%,#34c759 100%);
+            background-clip:text; -webkit-background-clip:text; color:transparent;
+            font-variant-numeric:tabular-nums;
+        }
+        .net-hero-sub{ font-size:0.74rem; color:#8e8e93; margin-top:8px; }
+        .net-hero-breakdown{ display:flex; gap:10px; flex-wrap:wrap; }
+        .net-bd-item{
+            background:#fff; border-radius:14px; padding:10px 14px; text-align:center;
+            min-width:100px; border:1px solid #eef2f7;
+        }
+        .net-bd-item span{ display:block; font-size:0.66rem; color:#8e8e93; margin-bottom:3px; }
+        .net-bd-item b{ font-size:0.95rem; font-weight:600; color:#1d1c1f; font-variant-numeric:tabular-nums; }
+        .net-bd-item.neg b{ color:#c0392b; }
+        .net-bd-item.pos b{ color:#1a7a37; }
+
+        /* ========== 左栏 3步 + 折叠区 ========== */
+        .step-block{ margin-bottom:1.5rem; }
+        .step-block:last-child{ margin-bottom:0; }
+        .step-head{
+            display:flex; align-items:center; gap:8px; font-weight:600; font-size:0.84rem;
+            color:#1c1c1e; margin-bottom:12px;
+        }
+        .step-num{
+            width:20px; height:20px; border-radius:50%; background:#007aff; color:#fff;
+            font-size:0.7rem; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0;
+        }
+        .collapsible{
+            margin-top:12px; border:1px solid #e9e9ef; border-radius:16px; overflow:hidden; background:#fff;
+        }
+        .collapsible>summary{
+            list-style:none; cursor:pointer; padding:10px 14px; font-size:0.78rem; font-weight:500;
+            color:#555; background:#f9f9fb; display:flex; align-items:center; gap:6px; user-select:none;
+        }
+        .collapsible>summary::-webkit-details-marker{ display:none; }
+        .collapsible>summary::after{ content:"⌄"; margin-left:auto; transition:transform 0.2s; color:#8e8e93; font-size:1rem; }
+        .collapsible:not([open])>summary::after{ transform:rotate(-90deg); }
+        .collapsible-body{ padding:12px 14px; }
+
+        /* ========== 右栏 绩效块折叠 ========== */
+        .perf-block{ cursor:default; }
+        .perf-block>summary{
+            list-style:none; cursor:pointer; display:flex; align-items:center; gap:6px;
+        }
+        .perf-block>summary::-webkit-details-marker{ display:none; }
+        .perf-chev{ margin-left:auto; color:#8e8e93; transition:transform 0.2s; font-size:0.9rem; }
+        .perf-block:not([open])>summary .perf-chev{ transform:rotate(-90deg); }
+        .perf-block-body{ margin-top:6px; }
+
+        /* ========== 薪资明细折叠 ========== */
+        .salary-detail{ margin:8px 0; }
+        .salary-detail>summary{
+            list-style:none; cursor:pointer; font-weight:600; font-size:0.86rem;
+            padding:10px 14px; background:#f2f2f5; border-radius:14px; display:flex; align-items:center; gap:6px;
+        }
+        .salary-detail>summary::-webkit-details-marker{ display:none; }
+        .salary-detail>summary::after{ content:"⌄"; margin-left:auto; transition:transform 0.2s; color:#8e8e93; }
+        .salary-detail:not([open])>summary::after{ transform:rotate(-90deg); }
+        .salary-detail-body{ margin-top:6px; }
+
+        /* ========== 底部速查表 标签页 ========== */
+        .lookup-card{ margin-top:1.5rem; }
+        .lookup-collapsible>summary{
+            list-style:none; cursor:pointer; font-weight:600; font-size:1rem;
+            display:flex; align-items:center; gap:8px; padding:0;
+        }
+        .lookup-collapsible>summary::-webkit-details-marker{ display:none; }
+        .lookup-collapsible>summary::after{ content:"⌄"; margin-left:auto; transition:transform 0.2s; color:#8e8e93; }
+        .lookup-collapsible:not([open])>summary::after{ transform:rotate(-90deg); }
+        .lookup-collapsible-body{ margin-top:18px; }
+        .tab-bar{ display:flex; gap:8px; margin-bottom:18px; flex-wrap:wrap; }
+        .tab-btn{
+            padding:8px 16px; border-radius:14px; font-size:0.8rem; font-weight:500;
+            cursor:pointer; border:1px solid #e4e4e8; background:#fff; color:#555; transition:all 0.2s;
+        }
+        .tab-btn:hover{ background:#f5f5f7; }
+        .tab-btn.active{ background:#007aff; color:#fff; border-color:#007aff; box-shadow:0 2px 8px rgba(0,122,255,0.2); }
+        .tab-panel{ display:none; }
+        .tab-panel.active{ display:block; animation:fadeIn 0.25s ease; }
+        @keyframes fadeIn{ from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:none;} }
+
+        @media(max-width:780px){
+            body{padding:1rem;}
+            .sd-grid{ grid-template-columns:repeat(auto-fill,minmax(140px,1fr));}
+            .mystery-chip{min-width:80px;font-size:0.68rem;}
+            .gap-milestones{ flex-direction:column; }
+            .net-hero{ flex-direction:column; align-items:flex-start; }
+            .net-hero-amount{ font-size:2.4rem; }
+            .net-hero-breakdown{ width:100%; }
+            .net-bd-item{ flex:1; min-width:0; }
+        }
+    
+        /* ========== 导入课时表 ========== */
+        .import-btn {
+            background:#fff; color:#007aff; border:1px solid #cfe0ff; border-radius:12px;
+            font-size:0.78rem; font-weight:600; padding:7px 14px; cursor:pointer; transition:all .18s;
+            white-space:nowrap;
+        }
+        .import-btn:hover { background:#f0f7ff; border-color:#007aff; }
+        .ach-synced-badge {
+            margin-top:10px; font-size:0.72rem; color:#1a7a37; background:#eafaf0;
+            border:1px solid #b8e6c8; border-radius:12px; padding:6px 10px;
+        }
+        .ach-synced-badge b { color:#0a6b2e; }
+        .ach-synced-badge .ovr { color:#b36d08; }
+        .mystery-synced-badge {
+            margin-top:10px; font-size:0.72rem; color:#6a3aa0; background:#f3edfb;
+            border:1px solid #d9c7f0; border-radius:12px; padding:6px 10px;
+        }
+        .mystery-synced-badge b { color:#5420a0; }
+        .mystery-synced-badge .ovr { color:#b36d08; }
+        .modal-mask {
+            position:fixed; inset:0; background:rgba(0,0,0,.35); backdrop-filter:blur(4px);
+            display:none; align-items:center; justify-content:center; z-index:1000; padding:20px;
+        }
+        .modal-box {
+            background:#fff; border-radius:24px; padding:24px 26px; width:min(680px, 94vw);
+            max-height:88vh; overflow:auto; box-shadow:0 20px 60px rgba(0,0,0,.25);
+        }
+        .modal-title { font-size:1.15rem; font-weight:600; }
+        .modal-sub { font-size:0.8rem; color:#6e6e73; margin:6px 0 14px; }
+        .modal-row { display:flex; align-items:center; gap:10px; margin-bottom:14px; font-size:0.85rem; }
+        .modal-row select { width:auto; min-width:160px; padding:8px 12px; border-radius:12px; border:1px solid #d9d9df; background:#fff; }
+        .modal-preview { max-height:46vh; overflow:auto; border:1px solid #ececf0; border-radius:14px; }
+        .imp-tbl { width:100%; border-collapse:collapse; font-size:0.78rem; }
+        .imp-tbl th, .imp-tbl td { padding:7px 10px; text-align:left; border-bottom:1px solid #f0f0f3; white-space:nowrap; }
+        .imp-tbl thead th { background:#f7f7fa; font-weight:600; position:sticky; top:0; }
+        .imp-tbl tr.imp-ok td { color:#1a7a37; }
+        .imp-tbl tr.imp-no td { color:#888; }
+        .imp-tbl tr.imp-extra td { color:#b36d08; background:#fff8ee; }
+        .modal-actions { display:flex; justify-content:flex-end; gap:12px; margin-top:18px; }
+        .btn-primary { background:#007aff; color:#fff; border:none; border-radius:12px; padding:9px 20px; font-size:0.85rem; font-weight:600; cursor:pointer; }
+        .btn-primary:hover { background:#0066d6; }
+        .btn-ghost { background:#f2f2f5; color:#444; border:none; border-radius:12px; padding:9px 18px; font-size:0.85rem; cursor:pointer; }
+        .btn-ghost:hover { background:#e6e6ea; }
+        .btn-danger { background:#ff3b30; color:#fff; border:none; border-radius:12px; padding:9px 20px; font-size:0.85rem; font-weight:600; cursor:pointer; }
+        .btn-danger:hover { background:#e0352b; }
+        .backup-btn { background:#f2f2f5; color:#444; border:1px solid #e2e2e7; border-radius:12px; padding:8px 14px; font-size:0.82rem; font-weight:500; cursor:pointer; }
+        .backup-btn:hover { background:#e6e6ea; }
+        .backup-btn.danger { color:#d33; border-color:#f3c2c2; background:#fff5f5; }
+        .backup-btn.danger:hover { background:#ffecec; }
+        .freeze-btn { background:#fff8e6; color:#9a6a00; border:1px solid #f0d28a; border-radius:12px; padding:8px 14px; font-size:0.82rem; font-weight:600; cursor:pointer; }
+        .freeze-btn:hover { background:#fff1cf; }
+        .freeze-badge { display:inline-block; background:#fdecea; color:#b3261e; border:1px solid #f5c2bd; border-radius:10px; padding:3px 10px; font-size:0.75rem; font-weight:600; margin-left:8px; }
+        /* ===== 工资条 PDF（单页精简） ===== */
+        .pdf-btn { background:#eef9f0; color:#1c7e4d; border:1px solid #b7e3c4; border-radius:12px; padding:8px 14px; font-size:0.82rem; font-weight:600; cursor:pointer; }
+        .pdf-btn:hover { background:#e0f5e6; }
+        #payslip { display:none; }
+        .ps-wrap { width:100%; box-sizing:border-box; margin:0 auto; background:#fff; color:#1c1c1e; font-family:-apple-system,'SF Pro Text','PingFang SC','Helvetica Neue',sans-serif; }
+        .ps-head { background:linear-gradient(135deg,#007aff 0%,#5ac8fa 100%); color:#fff; border-radius:10px 10px 0 0; padding:12px 18px; }
+        .ps-head h2 { margin:0; font-size:1.16rem; letter-spacing:2px; font-weight:700; }
+        .ps-head .ps-sub { margin-top:3px; font-size:0.74rem; opacity:0.92; }
+        .ps-meta { display:grid; grid-template-columns:1fr 1fr; gap:3px 20px; padding:8px 18px; background:#f7f9fc; border-bottom:1px solid #e9e9ef; font-size:0.78rem; }
+        .ps-meta div { display:flex; justify-content:space-between; }
+        .ps-meta b { color:#1c1c1e; font-weight:600; }
+        .ps-section { padding:7px 18px; }
+        .ps-sec-title { font-size:0.7rem; font-weight:700; color:#007aff; letter-spacing:1.5px; margin-bottom:3px; }
+        .ps-row { display:flex; justify-content:space-between; align-items:baseline; padding:3px 0; font-size:0.82rem; border-bottom:1px dashed #ececec; }
+        .ps-row .ps-lbl { color:#333; }
+        .ps-row .ps-lbl small { color:#9a9a9a; font-weight:400; margin-left:6px; }
+        .ps-row .ps-val { font-variant-numeric:tabular-nums; font-weight:600; }
+        .ps-row.sub { padding-left:14px; font-size:0.74rem; }
+        .ps-row.sub .ps-lbl { color:#777; }
+        .ps-row.sub .ps-val { font-weight:500; color:#555; }
+        /* 扣分明细专用样式：直白清单，保证子项名+金额都可见 */
+        .ps-deduct-head {
+            padding: 6px 0 4px 14px;
+            font-size: 0.72rem;
+            color: #6e6e73;
+            font-weight: 600;
+        }
+        .ps-deduct-item {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            padding: 3px 0 2px 26px;
+            font-size: 0.78rem;
+            color: #1d1d1f;
+            border-bottom: 1px dotted #ececec;
+        }
+        .ps-deduct-no {
+            color: #6e6e73;
+            font-weight: 500;
+            min-width: 16px;
+        }
+        .ps-deduct-name {
+            font-weight: 700;
+            color: #1d1d1f;
+            flex: 1;
+        }
+        .ps-deduct-amt {
+            color: #e34d4d;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+        }
+        .ps-deduct-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding: 6px 14px 4px 26px;
+            margin-top: 4px;
+            border-top: 1px solid #d2d2d7;
+            border-bottom: none;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #1d1d1f;
+        }
+        .ps-deduct-total span:last-child {
+            color: #e34d4d;
+            font-variant-numeric: tabular-nums;
+        }
+        .ps-row.sub2 { padding-left:26px; font-size:0.68rem; }
+        .ps-row.sub2 .ps-lbl { color:#b0b0b0; }
+        .op-deduct { color:#e34d4d; font-weight:700; }
+        .op-add { color:#2ea44f; font-weight:700; }
+        .ps-row.total { border-bottom:none; border-top:2px solid #e3e3e8; margin-top:3px; padding-top:5px; font-size:0.9rem; }
+        .ps-row.total .ps-val { color:#007aff; }
+        .ps-net { margin:6px 18px 0; background:linear-gradient(135deg,#eef6ff,#f4fbff); border:1px solid #cfe3ff; border-radius:10px; padding:10px 16px; display:flex; justify-content:space-between; align-items:center; }
+        .ps-net .ps-net-lbl { font-size:0.8rem; color:#1c3a5e; font-weight:600; }
+        .ps-net .ps-net-val { font-size:1.4rem; font-weight:800; color:#007aff; font-variant-numeric:tabular-nums; }
+        .ps-foot { padding:8px 18px 10px; font-size:0.66rem; color:#aaa; text-align:center; line-height:1.5; }
+        @page { size:A4; margin:8mm; }
+        @media print {
+          html, body { background:#fff !important; }
+          /* 关键：打印时彻底隐藏主程序（含其占位的高度），仅保留工资条，避免多出空白页 */
+          body > *:not(#payslip) { display:none !important; }
+          #payslip { display:block !important; position:static !important; left:auto; top:auto; width:100% !important; margin:0 !important; padding:0 !important; }
+          .ps-head, .ps-net { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+        }
+        .modal-sub { font-size:0.82rem; color:#6e6e73; margin:6px 0 10px; line-height:1.5; }
+        .toast {
+            position:fixed; left:50%; bottom:34px; transform:translateX(-50%) translateY(20px);
+            background:#1d1d1f; color:#fff; padding:12px 22px; border-radius:14px; font-size:0.82rem;
+            box-shadow:0 10px 30px rgba(0,0,0,.3); opacity:0; pointer-events:none; transition:all .3s; z-index:1100; max-width:90vw;
+        }
+        .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+</style>
+<script src="xlsx.full.min.js"></script>
+<style id="storeLockStyle">
+  #directAccessMask{ display:none; position:fixed; inset:0; z-index:2147483647; background:linear-gradient(135deg,#1d1d1f,#3a3a3c); color:#fff; align-items:center; justify-content:center; text-align:center; padding:24px; font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif; }
+  html.direct-access #directAccessMask{ display:flex !important; }
+  html.direct-access body > *:not(#directAccessMask){ display:none !important; }
+  .store-lock-banner{ margin:8px 0 4px; padding:8px 12px; border-radius:10px; font-size:0.82rem; font-weight:600; line-height:1.4; }
+  .store-lock-banner.locked{ background:#e8f5e9; color:#1b5e20; border:1px solid #a5d6a7; }
+  .store-lock-banner.notfound{ background:#fff3e0; color:#e65100; border:1px solid #ffcc80; }
+</style>
+<script>
+  (function(){ try{ if(window.self === window.top){ document.documentElement.className += ' direct-access'; } }catch(e){} })();
+</script>
+</head>
+<body>
+  <div id="directAccessMask">
+    <div style="max-width:420px;">
+      <div style="font-size:2.4rem; margin-bottom:12px;">🔒</div>
+      <div style="font-size:1.15rem; font-weight:600; margin-bottom:8px;">请通过知鸟工作台进入查看</div>
+      <div style="font-size:0.9rem; opacity:0.82; line-height:1.6;">薪资为敏感信息，不支持直接打开链接。<br>请在企业内部「知鸟工作台」中点击入口访问。</div>
+    </div>
+  </div>
+<div class="container">
+
+    <!-- 标题 -->
+    <div class="hero">
+        <div style="display:flex;align-items:center;flex-wrap:wrap;gap:10px;">
+            <h1>Coach 激励计算器</h1>
+            <span class="version-tag" id="versionTag">2026年8月 KPI版</span>
+            <label style="font-size:0.78rem;color:#6e6e73;display:flex;align-items:center;gap:6px;">
+                月份
+                <select id="monthSwitch" class="select-modern" style="width:auto;min-width:160px;margin:0;padding:7px 32px 7px 12px;"></select>
+            </label>
+            <button id="importBtn" class="import-btn" title="上传课时达成表（Excel/CSV），系统自动解析并填充真实达成率">📤 导入课时表</button>
+            <button id="exportBtn" class="backup-btn" title="导出全部本地数据为 JSON 备份文件（换设备/清缓存前必做）">💾 导出备份</button>
+            <button id="restoreBtn" class="backup-btn" title="从备份 JSON 文件恢复全部数据">📥 导入恢复</button>
+            <button id="clearBtn" class="backup-btn danger" title="清空浏览器本地保存的全部数据（需二次确认）">🗑️ 清空数据</button>
+            <button id="freezeBtn" class="freeze-btn" title="冻结/解冻当前月份：冻结后该月课时达成率与暗访分锁定，无法手动修改或重新导入（查看/切月看结果始终允许）">🔒 冻结本月</button>
+            <button id="pdfBtn" class="pdf-btn" style="display:none;" title="一键生成当前员工的 PDF 工资条（在打印对话框中选择“另存为 PDF”即可下载；仅上个月数据可导出）">🧾 导出工资条PDF</button>
+            <span id="freezeBadge" class="freeze-badge" style="display:none;">🔒 已冻结</span>
+            <input type="file" id="achFileInput" accept=".xlsx,.xls,.csv" style="display:none;">
+            <input type="file" id="restoreFileInput" accept=".json,application/json" style="display:none;">
+        </div>
+        <div class="hero-sub">
+            课时达成率驱动 Coach项目(45%) · 门店培训管理(20%) · 门店协作配合(20%) · 暗访奖惩(30%) ｜ 顶部切换月份即可打开该月计算器（每月配置独立保留，不再互相覆盖）
+        </div>
+    </div>
+
+    <!-- ========== 💰 到手工资 Hero（实时结果置顶） ========== -->
+    <div class="net-hero card">
+        <div class="net-hero-main">
+            <div class="net-hero-label">💰 到手工资（实时）</div>
+            <div class="net-hero-amount" id="netHeroAmount">0.00</div>
+            <div class="net-hero-sub" id="netHeroStore">—</div>
+        </div>
+        <div class="net-hero-breakdown">
+            <div class="net-bd-item pos"><span>税前应发</span><b id="netHeroGross">0.00</b></div>
+            <div class="net-bd-item neg"><span>五险一金</span><b id="netHeroIns">-642.72</b></div>
+            <div class="net-bd-item neg"><span>个税</span><b id="netHeroTax">0.00</b></div>
+            <div class="net-bd-item"><span>最终绩效</span><b id="netHeroPerf">0.00</b></div>
+        </div>
+    </div>
+
+    <!-- ========== 薪资计算器主体 ========== -->
+    <div class="dashboard">
+        <!-- 左侧：参数面板 -->
+        <div class="left-panel card">
+            <div class="card-header">🏪 参数设置</div>
+            <div class="card-content">
+                <!-- Step 1 选门店 -->
+                <div class="step-block">
+                    <div class="step-head"><span class="step-num">1</span> 选门店</div>
+                    <label style="font-weight:500; font-size:0.85rem;">当前选中门店</label>
+                    <select id="storeSelect" class="select-modern"></select>
+                    <details class="collapsible">
+                        <summary>🔢 客流 → 课时自动匹配（试算其他门店）</summary>
+                        <div class="collapsible-body">
+                            <div class="flow-matcher" style="margin:0; border:none; background:transparent; padding:0;">
+                                <div class="slider-label">输入门店客流试算目标课时</div>
+                                <div style="display:flex; gap:10px; align-items:center;">
+                                    <input type="number" id="flowInput" class="value-input" style="width:120px; padding:8px 10px; border:1px solid #cfe3ff; background:#fff;" placeholder="输入客流" min="0">
+                                    <span style="font-size:0.72rem; color:#888;">按客流分级口径填写</span>
+                                </div>
+                                <div class="flow-match-result" id="flowMatchResult">
+                                    <span class="fm-tier">—</span><span class="fm-arrow">→</span><span class="fm-hour">目标课时 —</span>
+                                </div>
+                                <div class="flow-legend">
+                                    客流 &lt; 1200 → <b>3.5h</b> ｜ 1200≤客流&lt;2000 → <b>4.0h</b> ｜ 2000≤客流&lt;3500 → <b>4.5h</b> ｜ 客流≥3500 → <b>5.0h</b><br>
+                                    边界示例：1200→4.0h ｜ 2000→4.5h ｜ 3500→5.0h
+                                </div>
+                                <div class="flow-boundary" id="flowBoundary"></div>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+
+                <!-- Step 2 设参数 -->
+                <div class="step-block">
+                    <div class="step-head"><span class="step-num">2</span> 设参数</div>
+                    <div style="margin:0 0 0.8rem 0;">
+                        <div class="slider-label"><span>📈 课时达成率</span><span id="achievePercentShow">100%</span></div>
+                        <div style="display:flex; gap:12px; align-items:center;">
+                            <input type="range" id="hourSlider" min="0" max="150" step="1" value="100" style="flex:1;">
+                            <input type="number" id="hourNumber" class="value-input" min="0" max="150" step="1" value="100">
+                        </div>
+                        <div style="background:#f7f7fa; border-radius:18px; padding:8px 12px; font-size:0.75rem; margin-top:12px;">
+                            🎯 目标课时：<strong id="targetHourSpan">0</strong> h &nbsp;·&nbsp; 实际达成：<strong id="actualHourSpan">0.0</strong> h
+                        </div>
+                        <div class="slider-zone-badge" id="sliderZoneBadge"></div>
+                        <div class="ach-synced-badge" id="achSyncedBadge" style="display:none;"></div>
+                    </div>
+                    <details class="collapsible">
+                        <summary>📐 系数规则 & 口径说明</summary>
+                        <div class="collapsible-body">
+                            <div style="font-size:0.7rem; color:#888; line-height:1.6;">
+                                总服务时长=课时时长+门店支持（门店支持≤总时长30%）<br>
+                                系数规则（10%阶梯）：<b>&lt;80%→0</b> ｜ <b>[80,100)→0.80</b> ｜ <b>[100,110)→1.00</b> ｜ <b>[110,120)→1.10</b> ｜ <b>[120,130)→1.20</b> ｜ <b>≥130%→1.30</b>
+                            </div>
+                        </div>
+                    </details>
+                    <div style="margin-top:1.2rem;">
+                        <div class="slider-label">🎭 暗访得分区间 <span style="font-weight:400;color:#888;font-size:0.75rem;">（占绩效基数30%）</span></div>
+                        <div class="mystery-grid" id="mysteryGroup">
+                            <div data-coeff="0.6" class="mystery-chip">❌ &lt;60分<br><b>60%</b></div>
+                            <div data-coeff="0.9" class="mystery-chip">⚠️ 60~70分<br><b>90%</b></div>
+                            <div data-coeff="1.0" class="mystery-chip">👍 71~80分<br><b>100%</b></div>
+                            <div data-coeff="1.2" class="mystery-chip">🌟 81~99分<br><b>120%</b></div>
+                            <div data-coeff="1.3" class="mystery-chip">💎 100分<br><b>130%</b></div>
+                        </div>
+                        <div class="mystery-synced-badge" id="mysterySyncedBadge" style="display:none;"></div>
+                        <div style="font-size:0.7rem; background:#f2f2f5; border-radius:14px; padding:8px 10px; margin-top:12px;">
+                            💡 暗访奖惩 = 绩效基数合计 × 30% × (暗访系数 − 1)
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3 课时差距规划器 -->
+                <div class="step-block">
+                    <div class="step-head"><span class="step-num">3</span> 课时差距规划器</div>
+                    <div class="gap-planner">
+                        <div class="slider-label">📐 课时差距规划器 <span style="font-weight:400;color:#888;font-size:0.7rem;">（输入日均有效服务+已工作天数，按"拉高月底日均"算每天至少保持多少h）</span></div>
+                        <div class="gap-input-row">
+                            <span style="font-size:0.72rem; color:#555; font-weight:500;">日均有效服务</span>
+                            <input type="number" id="gapInput" class="value-input" style="width:70px; padding:8px 10px; border:1px solid #cfe3ff; background:#fff;" placeholder="日均" min="0" step="0.01">
+                            <span style="font-size:0.72rem; color:#888;">h</span>
+                            <span style="font-size:0.72rem; color:#555; font-weight:500;">已工作</span>
+                            <input type="number" id="gapDaysWorked" class="value-input" style="width:48px; padding:8px 8px; border:1px solid #cfe3ff; background:#fff;" placeholder="天" min="1" step="1">
+                            <span style="font-size:0.72rem; color:#888;">天</span>
+                            <span style="margin-left:auto; font-size:0.72rem; color:#555; font-weight:500;">距月底</span>
+                            <input type="number" id="gapDays" class="value-input" style="width:48px; padding:8px 8px; border:1px solid #cfe3ff; background:#fff;" placeholder="天" min="1" step="1">
+                            <span style="font-size:0.72rem; color:#888;">天</span>
+                        </div>
+                        <div class="gap-current-rate" id="gapCurrentRate">输入日均有效服务时长 →</div>
+                        <div class="zone-locator" id="zoneLocator"></div>
+                        <div class="gap-headline gh-empty" id="gapHeadline">💎 输入「日均有效服务+已工作天数」，按正确公式算每天至少保持多少h达130%封顶</div>
+                        <div class="gap-milestones" id="gapMilestones"></div>
+                        <div class="gap-summary" id="gapSummary"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右侧：绩效构成 -->
+        <div class="right-panel card">
+            <div class="card-header">📋 绩效工资构成 · 总额 <b>3500</b> 元 <span style="font-size:0.75rem;font-weight:400;color:#888;">(2026.7 KPI)</span></div>
+            <div id="perfScoreBadge" class="perf-score-badge" style="display:none;"></div>
+            <div class="card-content">
+
+                <!-- Coach 项目 45% -->
+                <details class="perf-block">
+                    <summary class="perf-block-title">
+                        🏅 Coach 项目
+                        <span class="amt-badge" id="coachBaseLabel">1575 元</span>
+                        <span class="pct-badge">45%</span>
+                        <span class="perf-chev">⌄</span>
+                    </summary>
+                    <div class="perf-block-body">
+                    <div class="toggle-row">
+                        <span>📊 课时达成率驱动所得</span>
+                        <span class="score-badge" id="coachEarnSpan">0.00</span>
+                    </div>
+                    <div class="toggle-row">
+                        <span class="sub-item-label">📈 课时达成率系数</span>
+                        <span class="score-badge" id="hourCoeffShow">0%</span>
+                    </div>
+                    <div class="toggle-row"><span class="sub-item-label">📚 课程种类分布 (175元 · 5%)</span><input type="checkbox" id="courseTypeCheckbox" checked></div>
+                    <div class="toggle-row"><span class="sub-item-label">🔄 课时去重 (175元 · 5%)</span><input type="checkbox" id="dedupCheckbox" checked></div>
+                    <div class="toggle-row"><span class="sub-item-label">👨‍🏫 预备Coach辅导 (每月4场)</span><input type="checkbox" id="prepCoachCheckbox" checked></div>
+                </div>
+                </details>
+
+                <!-- 门店培训管理 20% -->
+                <details class="perf-block">
+                    <summary class="perf-block-title">
+                        🎓 门店培训管理
+                        <span class="amt-badge">700 元</span>
+                        <span class="pct-badge">20%</span>
+                        <span class="perf-chev">⌄</span>
+                    </summary>
+                    <div class="perf-block-body">
+                    <div class="toggle-row" style="flex-direction:column; align-items:start;">
+                        <span class="sub-item-label">🌱 Seed活跃度 (175元·5%) — 单周未活跃扣1%</span>
+                        <div class="week-group" id="seedWeeks"></div>
+                    </div>
+                    <div class="toggle-row" style="flex-direction:column; align-items:start;">
+                        <span class="sub-item-label">🗣️ 知鸟话术 (175元·5%) — 每周练习次数达标</span>
+                        <div class="week-group" id="talkWeeks"></div>
+                    </div>
+                    <div class="toggle-row" style="flex-direction:column; align-items:start;">
+                        <span class="sub-item-label">🎥 知鸟演示 (175元·5%) — 每周练习次数达标</span>
+                        <div class="week-group" id="demoWeeks"></div>
+                    </div>
+                    <div class="toggle-row">
+                        <span class="sub-item-label">📝 AEP月考 (175元·5%) — 不满足报名条件扣5%</span>
+                        <input type="checkbox" id="aepCheckbox" checked>
+                    </div>
+                    <div class="red-note">
+                        ⚠️ 项目红线：① SEED活跃复核需客服全员通（90+7未通关新人除外）<br>
+                        　② COACH自己完成带教或完成考试 → 此项AEP直接清零
+                    </div>
+                    </div>
+                </details>
+
+                <!-- 门店协作配合 20% -->
+                <details class="perf-block">
+                    <summary class="perf-block-title">
+                        🤝 门店协作配合
+                        <span class="amt-badge">700 元</span>
+                        <span class="pct-badge">20%</span>
+                        <span class="perf-chev">⌄</span>
+                    </summary>
+                    <div class="perf-block-body">
+                    <div class="red-note">
+                        ⚠️ 项目红线：请将本人 <b>100% 完成培训管理工作</b><br>
+                        　1. 在门店高客流时段/销售人员不足时主动接顾客，积极配合线上履约<br>
+                        　2. 协助店长进行店内管工作，保证商品安全与库存准确性<br>
+                        　3. 在线上有客诉的情况下，协助带教新人或其他店长安排的工作
+                    </div>
+                    <div class="toggle-row">
+                        <span>✅ 门店协作配合考核</span>
+                        <input type="checkbox" id="teamCheckbox" checked>
+                        <span class="score-badge" id="collabEarnSpan">700.00</span>
+                    </div>
+                    </div>
+                </details>
+
+                <!-- 薪资明细汇总（默认折叠） -->
+                <details class="salary-detail" id="salaryDetailArea">
+                    <summary>📊 薪资明细（点开查看计算链路）</summary>
+                    <div class="salary-detail-body">
+                        <div class="calc-row"><span>🧱 基本工资</span><span>3,500.00 元</span></div>
+                        <div class="calc-row"><span>📊 绩效基数合计</span><span id="basePerfSpan">0.00</span></div>
+                        <div class="calc-row"><span>🎭 暗访奖惩 (×30%×(系数−1))</span><span id="mysteryAdjustSpan">0.00</span></div>
+                        <div class="calc-row"><span>✨ 最终绩效</span><span id="finalPerfSpan">0.00</span></div>
+                        <div class="calc-row"><span>💰 税前应发</span><span id="grossSpan">0.00</span></div>
+                        <div class="calc-row"><span>🏦 五险一金</span><span>-642.72 元</span></div>
+                        <div class="calc-row"><span>📉 个税</span><span id="taxSpan">0.00</span></div>
+                    </div>
+                </details>
+                <button id="resetBtn" class="reset-button">⟳ 重置所有参数</button>
+                <div class="footnote">五险一金642.72元 · 个税起征5000元 · 顶部实时显示到手工资 · 数据来源：26年KPI构成明细 + 门店客流分级表 ｜ 多月份版，每月门店目标独立保存</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== 📚 速查表（标签页，默认折叠） ========== -->
+    <div class="card lookup-card">
+        <details class="lookup-collapsible">
+            <summary>📚 速查表 · 课时达成 / 达成×暗访 / 阶梯规则（点击展开）</summary>
+            <div class="lookup-collapsible-body">
+                <div class="tab-bar">
+                    <div class="tab-btn active" data-tab="achieve">📊 课时达成速查</div>
+                    <div class="tab-btn" data-tab="mystery">⚡ 达成×暗访速查</div>
+                    <div class="tab-btn" data-tab="rule">📐 10%阶梯规则</div>
+                </div>
+                <div class="tab-panel active" id="tab-achieve">
+                    <div class="al-wrap" style="margin-top:0;">
+                        <div class="lookup-title">
+                            📊 课时达成速查表
+                            <span class="lookup-sub">（Coach项目45% + 参考到手）</span>
+                        </div>
+                        <table class="al-table" id="achieveLookupTable"></table>
+                        <div class="al-gate">⚠️ 10%阶梯规则：[80,100)→0.8，[100,110)→1.0，[110,120)→1.1，[120,130)→1.2，≥130→1.3（封顶）。必须达到110/120/130节点才能再涨一档</div>
+                        <div class="al-note">*参考到手 = 其余项目全勾选 + 暗访100分(系数1.3) · 实际金额以顶部实时计算为准</div>
+                    </div>
+                </div>
+                <div class="tab-panel" id="tab-mystery">
+                    <div class="lookup-table-wrap" style="margin-top:0;">
+                        <div class="lookup-title">
+                            ⚡ 到手工资速查表
+                            <span class="lookup-sub">（全勾选 · 单位：元）</span>
+                        </div>
+                        <div class="lookup-grid" id="lookupGrid"></div>
+                    </div>
+                </div>
+                <div class="tab-panel" id="tab-rule">
+                    <div class="lookup-title">📐 10%阶梯系数规则</div>
+                    <div style="font-size:0.8rem; line-height:2; background:#f9f9fb; border-radius:16px; padding:16px 18px;">
+                        <b>课时达成率 → 系数（分档，非线性）</b><br>
+                        &lt; 80% &nbsp;→&nbsp; <b>0</b>（Coach项目归零）<br>
+                        [80, 100) &nbsp;→&nbsp; <b>0.80</b><br>
+                        [100, 110) &nbsp;→&nbsp; <b>1.00</b>（基准）<br>
+                        [110, 120) &nbsp;→&nbsp; <b>1.10</b><br>
+                        [120, 130) &nbsp;→&nbsp; <b>1.20</b><br>
+                        ≥ 130% &nbsp;→&nbsp; <b>1.30</b>（封顶）<br>
+                        <br>
+                        <b>暗访系数</b>：&lt;60→0.6 ｜ 60~70→0.9 ｜ 71~80→1.0 ｜ 81~99→1.2 ｜ 100→1.3<br>
+                        <b>暗访奖惩</b> = 绩效基数合计 × 30% × (暗访系数 − 1)
+                    </div>
+                </div>
+            </div>
+        </details>
+    </div>
+
+</div>
+
+
+    <!-- ========== 📤 导入课时达成表 弹窗 ========== -->
+    <div class="modal-mask" id="importModal">
+        <div class="modal-box">
+            <div class="modal-title">📤 导入课时达成表</div>
+            <div class="modal-sub" id="importFileInfo"></div>
+            <div class="modal-row">
+                <label>应用到月份：</label>
+                <select id="importMonthSel" class="select-modern"></select>
+            </div>
+            <div class="modal-preview" id="importPreview"></div>
+            <div class="modal-actions">
+                <button class="btn-ghost" id="importCancel">取消</button>
+                <button class="btn-primary" id="importConfirm">确认导入</button>
+            </div>
+        </div>
+    </div>
+    <!-- ========== ⚠️ 清空二次确认 弹窗 ========== -->
+    <div class="modal-mask" id="confirmModal">
+        <div class="modal-box">
+            <div class="modal-title">⚠️ 清空全部数据</div>
+            <div class="modal-sub">此操作将删除浏览器本地保存的全部薪资数据（含各月配置与已上传的课时达成表），<b>且无法撤销</b>。建议先点「💾 导出备份」再操作。</div>
+            <div class="modal-actions">
+                <button class="btn-ghost" id="confirmCancel">取消</button>
+                <button class="btn-danger" id="confirmOk">确认清空</button>
+            </div>
+        </div>
+    </div>
+    <div class="toast" id="toast"></div>
+
+<script>
+// ================================================================
+//  ★ 门店数据（含客流分组）—— 来源：门店客流分级表
+// ================================================================
+// ============================================================
+//  ★ 多月份门店配置（新增月份：在 MONTH_CONFIGS 追加一项即可；绩效方案全局通用，不改）
+//    注：每月门店目标取自当月客流分级表；7月配置为 7月版门店分组，8月为 8月版
+// ============================================================
+const MONTH_CONFIGS = {
+  "2026-07": {
+    label: "2026年7月",
+    stores: [
+      { name:"武汉梦时代店", coach:"李宇锋", flowGroup:"3500+", targetHour:5.0, achievedRate:124.99, daysWorked:27, effHours:6.249 },
+      { name:"三亚大悦城店", coach:"胡善淳", flowGroup:"3500+", targetHour:5.0, achievedRate:113.32, daysWorked:27, effHours:5.666 },
+      { name:"长沙万象城店", coach:"陈宇轩", flowGroup:"3500+", targetHour:5.0, achievedRate:129.81, daysWorked:27, effHours:6.491 },
+      { name:"长沙国金街店", coach:"黄绪", flowGroup:"2000-3500", targetHour:4.5, achievedRate:116.9, daysWorked:27, effHours:5.26 },
+      { name:"海口吾悦店", coach:"韦琪琪", flowGroup:"2000-3500", targetHour:4.5, achievedRate:101.39, daysWorked:27, effHours:4.563 },
+      { name:"海口友谊店", coach:"吉敏", flowGroup:"2000-3500", targetHour:4.5, achievedRate:102.37, daysWorked:27, effHours:4.607 },
+      { name:"泉州中骏店", coach:"侯坚明", flowGroup:"2000-3500", targetHour:4.5, achievedRate:105.62, daysWorked:27, effHours:4.753 },
+      { name:"武汉万科未来店", coach:"丁肖", flowGroup:"2000-3500", targetHour:4.5, achievedRate:102.09, daysWorked:27, effHours:4.594 },
+      { name:"武汉世纪都会店", coach:"杨尚霖", flowGroup:"2000-3500", targetHour:4.5, achievedRate:107.67, daysWorked:27, effHours:4.845 },
+      { name:"武汉天地壹方店", coach:"黄明智", flowGroup:"2000-3500", targetHour:4.5, achievedRate:108.6, daysWorked:24, effHours:4.887 },
+      { name:"常州江南环球港店", coach:"张晨昱", flowGroup:"2000-3500", targetHour:4.5, achievedRate:89.83, daysWorked:15, effHours:4.042 },
+      { name:"长沙北辰荟店", coach:"吴昊东", flowGroup:"1200-2000", targetHour:4.0, achievedRate:115.49, daysWorked:27, effHours:4.62 },
+      { name:"厦门国贸店", coach:"刘川平", flowGroup:"1200-2000", targetHour:4.0, achievedRate:105.8, daysWorked:27, effHours:4.232 },
+      { name:"武汉凯德西城店", coach:"徐浩然", flowGroup:"1200-2000", targetHour:4.0, achievedRate:108.19, daysWorked:27, effHours:4.328 },
+      { name:"长沙梅溪湖金茂店", coach:"何少卿", flowGroup:"1200-2000", targetHour:4.0, achievedRate:111.25, daysWorked:27, effHours:4.45 },
+      { name:"无锡海岸城店", coach:"董伊雯", flowGroup:"1200-", targetHour:3.5, achievedRate:131.71, daysWorked:27, effHours:4.61 },
+      { name:"南通金鹰购物广场店", coach:"薛海涛", flowGroup:"1200-", targetHour:3.5, achievedRate:103.7, daysWorked:27, effHours:3.63 },
+      { name:"常州九洲新世界店", coach:"乔子晏", flowGroup:"1200-", targetHour:3.5, achievedRate:99.49, daysWorked:26, effHours:3.482 },
+      { name:"武汉亚贸店", coach:"胥雨萱", flowGroup:"1200-", targetHour:3.5, achievedRate:101.36, daysWorked:27, effHours:3.548 },
+      { name:"长沙河西王府井店", coach:"周佳乐", flowGroup:"1200-", targetHour:3.5, achievedRate:131.78, daysWorked:27, effHours:4.612 }
+    ]
+  },
+  "2026-08": {
+    label: "2026年8月",
+        stores: [
+      { name:"武汉梦时代店", coach:"李宇锋", flowGroup:"3500+", targetHour:5.0, achievedRate:124.70, daysWorked:20, effHours:6.235 },
+      { name:"三亚大悦城店", coach:"胡善淳", flowGroup:"", targetHour:5.0, achievedRate:124.20, daysWorked:20, effHours:6.210 },
+      { name:"泉州中骏店", coach:"侯坚明", flowGroup:"2000-3500", targetHour:4.5, achievedRate:105.93, daysWorked:20, effHours:4.767 },
+      { name:"长沙国金街店", coach:"黄绪", flowGroup:"", targetHour:4.5, achievedRate:101.37, daysWorked:20, effHours:4.562 },
+      { name:"长沙万象城店", coach:"陈宇轩", flowGroup:"", targetHour:4.5, achievedRate:122.50, daysWorked:20, effHours:5.512 },
+      { name:"海口吾悦店", coach:"韦琪琪", flowGroup:"", targetHour:4.5, achievedRate:95.58, daysWorked:20, effHours:4.301 },
+      { name:"海口友谊店", coach:"吉敏", flowGroup:"", targetHour:4.5, achievedRate:99.39, daysWorked:20, effHours:4.473 },
+      { name:"武汉万科未来店", coach:"丁肖", flowGroup:"1200-2000", targetHour:4.0, achievedRate:96.54, daysWorked:20, effHours:3.862 },
+      { name:"武汉世纪都会店", coach:"杨尚霖", flowGroup:"", targetHour:4.0, achievedRate:111.50, daysWorked:20, effHours:4.460 },
+      { name:"武汉洪山万科店", coach:"胥雨萱", flowGroup:"", targetHour:4.0, achievedRate:108.17, daysWorked:18, effHours:4.327 },
+      { name:"长沙北辰荟店", coach:"吴昊东", flowGroup:"", targetHour:4.0, achievedRate:126.00, daysWorked:20, effHours:5.040 },
+      { name:"武汉凯德西城店", coach:"徐浩然", flowGroup:"", targetHour:4.0, achievedRate:111.81, daysWorked:20, effHours:4.472 },
+      { name:"厦门国贸店", coach:"刘川平", flowGroup:"1200-", targetHour:3.5, achievedRate:118.81, daysWorked:20, effHours:4.158 },
+      { name:"长沙梅溪湖金茂店", coach:"何少卿", flowGroup:"", targetHour:3.5, achievedRate:110.57, daysWorked:20, effHours:3.870 },
+      { name:"无锡海岸城店", coach:"董伊雯", flowGroup:"", targetHour:3.5, achievedRate:141.86, daysWorked:20, effHours:4.965 },
+      { name:"南通金鹰购物广场店", coach:"薛海涛", flowGroup:"", targetHour:3.5, achievedRate:111.17, daysWorked:20, effHours:3.891 },
+      { name:"长沙河西王府井店", coach:"周佳乐", flowGroup:"", targetHour:3.5, achievedRate:125.31, daysWorked:20, effHours:4.386 },
+    ]
+  }
+};
+
+function detectDefaultMonth(){
+  var now = new Date();
+  var key = now.getFullYear() + "-" + String(now.getMonth()+1).padStart(2,"0");
+  if(MONTH_CONFIGS[key]) return key;
+  var keys = Object.keys(MONTH_CONFIGS).sort();
+  return keys[keys.length-1];
+}
+function selYM(){
+  var p = currentMonth.split("-");
+  return { y: +p[0], mo: (+p[1]) - 1 };
+}
+// 工资条导出入口：仅当「选中月份 == 系统当前月份的上一个月」时可见
+function isPrevMonthSelected(){
+  var now = new Date();
+  var prev = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  var sel = selYM();
+  return sel.y === prev.getFullYear() && sel.mo === prev.getMonth();
+}
+function updatePdfBtnVisibility(){
+  var btn = document.getElementById("pdfBtn");
+  if(btn) btn.style.display = isPrevMonthSelected() ? "" : "none";
+}
+var currentMonth = detectDefaultMonth();   // 默认：当前真实月份（若存在配置），否则最新月份
+var stores = MONTH_CONFIGS[currentMonth].stores;
+
+// ---------- KPI常量 ----------
+var BASE_SALARY = 3500;
+var COACH_BASE = 1575;      // Coach项目 45%
+var COURSE_AMT = 175;        // 课程种类分布 5%
+var DEDUP_AMT = 175;         // 课时去重 5%
+var PREP_AMT = 150;          // 预备Coach辅导
+var SEED_BASE = 175;         // Seed活跃度 5%
+var TALK_BASE = 175;         // 知鸟话术 5%
+var DEMO_BASE = 175;         // 知鸟演示 5%
+var AEP_AMT = 175;           // AEP月考 5%
+var COLLAB_AMT = 700;        // 门店协作配合 20%
+var INSURANCE = 642.72;       // ★ 五险一金（绩效方案不变，多月份通用；公积金 336→352，总 +16）
+
+// 法定节假日配置：键为 "YYYY-MM"，值为该月「非周一」法定假日（休息日）的"日"数组
+// 用户告知后由我填入；例：5月劳动节 → "2026-05": [1, 2]
+var MONTH_HOLIDAYS = {
+  // "2026-05": [1, 2]
+};
+
+// 7月绩效评分（来源：Coach 7月绩效评分.xlsx，评估人打分，2026-08 导入）
+// 合计系数 = 各加权子项之和；绩效工资 = BASE_SALARY(3500) × 系数
+// 按 Coach 姓名匹配（与 MONTH_CONFIGS 的 store.coach 字段 1:1 对应），覆盖 20 家全部命中
+// 暗访奖惩仍在系数之上叠加（两套体系暗访均独立）
+// 数据来源：Coach 7月绩效评分.xlsx（Excel 20 列 / 20 位教练合计系数，检索时间 2026-08-08）
+// 7月绩效评分（来源：Coach 7月绩效评分.xlsx，评估人打分，2026-08 导入）
+// 数据结构：{total: 合计系数, items: [{n: 子项名, w: 权重, s: 实得分}]}，9项权重和=1.00
+// 绩效工资 = BASE_SALARY(3500) × total，覆盖 granular 分项；暗访奖惩仍叠加
+// 按 Coach 姓名匹配（与 MONTH_CONFIGS 的 store.coach 字段 1:1 对应），覆盖 20 家全部命中
+// 数据来源：Coach 7月绩效评分.xlsx（9 个加权子项 × 20 位教练，检索时间 2026-08-08）
+var PERF_SCORE_TABLE = {
+  "2026-07": {
+    '杨尚霖': { total:0.98, items:[{n:'门店协作配合',w:0.2,s:0.2}, {n:'总服务时长',w:0.45,s:0.45}, {n:'课程种类分布',w:0.05,s:0.05}, {n:'课时去重',w:0.05,s:0.05}, {n:'预备Coach辅导',w:0.05,s:0.05}, {n:'Seed活跃度',w:0.05,s:0.03}, {n:'知鸟话术',w:0.05,s:0.05}, {n:'知鸟演示',w:0.05,s:0.05}, {n:'AEP月考',w:0.05,s:0.05}] },
+    '徐浩然': { total:0.99, items:[{n:'门店协作配合',w:0.2,s:0.2}, {n:'总服务时长',w:0.45,s:0.45}, {n:'课程种类分布',w:0.05,s:0.04}, {n:'课时去重',w:0.05,s:0.05}, {n:'预备Coach辅导',w:0.05,s:0.05}, {n:'Seed活跃度',w:0.05,s:0.05}, {n:'知鸟话术',w:0.05,s:0.05}, {n:'知鸟演示',w:0.05,s:0.05}, {n:'AEP月考',w:0.05,s:0.05}] },
+    '丁肖': { total:0.97, items:[{n:'门店协作配合',w:0.2,s:0.2}, {n:'总服务时长',w:0.45,s:0.45}, {n:'课程种类分布',w:0.05,s:0.05}, {n:'课时去重',w:0.05,s:0.05}, {n:'预备Coach辅导',w:0.05,s:0.05}, {n:'Seed活跃度',w:0.05,s:0.04}, {n:'知鸟话术',w:0.05,s:0.04}, {n:'知鸟演示',w:0.05,s:0.04}, {n:'AEP月考',w:0.05,s:0.05}] },
+    '黄明智': { total:0.73, items:[{n:'门店协作配合',w:0.2,s:0.0}, {n:'总服务时长',w:0.45,s:0.45}, {n:'课程种类分布',w:0.05,s:0.05}, {n:'课时去重',w:0.05,s:0.05}, {n:'预备Coach辅导',w:0.05,s:0.05}, {n:'Seed活跃度',w:0.05,s:0.0}, {n:'知鸟话术',w:0.05,s:0.04}, {n:'知鸟演示',w:0.05,s:0.04}, {n:'AEP月考',w:0.05,s:0.05}] },
+    '李宇锋': { total:1.09, items:[{n:'门店协作配合',w:0.2,s:0.2}, {n:'总服务时长',w:0.45,s:0.54}, {n:'课程种类分布',w:0.05,s:0.05}, {n:'课时去重',w:0.05,s:0.05}, {n:'预备Coach辅导',w:0.05,s:0.05}, {n:'Seed活跃度',w:0.05,s:0.05}, {n:'知鸟话术',w:0.05,s:0.05}, {n:'知鸟演示',w:0.05,s:0.05}, {n:'AEP月考',w:0.05,s:0.05}] },
+    '胥雨萱': { total:1.0, items:[{n:'门店协作配合',w:0.2,s:0.2}, {n:'总服务时长',w:0.45,s:0.45}, {n:'课程种类分布',w:0.05,s:0.05}, {n:'课时去重',w:0.05,s:0.05}, {n:'预备Coach辅导',w:0.05,s:0.05}, {n:'Seed活跃度',w:0.05,s:0.05}, {n:'知鸟话术',w:0.05,s:0.05}, {n:'知鸟演示',w:0.05,s:0.05}, {n:'AEP月考',w:0.05,s:0.05}] },
+    '周佳乐': { total:1.135, items:[{n:'门店协作配合',w:0.2,s:0.2}, {n:'总服务时长',w:0.45,s:0.585}, {n:'课程种类分布',w:0.05,s:0.05}, {n:'课时去重',w:0.05,s:0.05}, {n:'预备Coach辅导',w:0.05,s:0.05}, {n:'Seed活跃度',w:0.05,s:0.05}, {n:'知鸟话术',w:0.05,s:0.05}, {n:'知鸟演示',w:0.05,s:0.05}, {n:'AEP月考',w:0.05,s:0.05}] },
+    '黄绪': { total:1.015, items:[{n:'门店协作配合',w:0.2,s:0.2}, {n:'总服务时长',w:0.45,s:0.495}, {n:'课程种类分布',w:0.05,s:0.05}, {n:'课时去重',w:0.05,s:0.05}, {n:'预备Coach辅导',w:0.05,s:0.05}, {n:'Seed活跃度',w:0.05,s:0.02}, {n:'知鸟话术',w:0.05,s:0.05}, {n:'知鸟演示',w:0.05,s:0.05}, {n:'AEP月考',w:0.05,s:0.05}] },
+    '陈宇轩': { total:1.135, items:[{n:'门店协作配合',w:0.2,s:0.2}, {n:'总服务时长',w:0.45,s:0.585}, {n:'课程种类分布',w:0.05,s:0.05}, {n:'课时去重',w:0.05,s:0.05}, {n:'预备Coach辅导',w:0.05,s:0.05}, {n:'Seed活跃度',w:0.05,s:0.05}, {n:'知鸟话术',w:0.05,s:0.05}, {n:'知鸟演示',w:0.05,s:0.05}, {n:'AEP月考',w:0.05,s:0.05}] },
+    '吴昊东': { total:1.045, items:[{n:'门店协作配合',w:0.2,s:0.2}, {n:'总服务时长',w:0.45,s:0.495}, {n:'课程种类分布',w:0.05,s:0.05}, {n:'课时去重',w:0.05,s:0.05}, {n:'预备Coach辅导',w:0.05,s:0.05}, {n:'Seed活跃度',w:0.05,s:0.05}, {n:'知鸟话术',w:0.05,s:0.05}, {n:'知鸟演示',w:0.05,s:0.05}, {n:'AEP月考',w:0.05,s:0.05}] },
+    '何少卿': { total:1.035, items:[{n:'门店协作配合',w:0.2,s:0.2}, {n:'总服务时长',w:0.45,s:0.495}, {n:'课程种类分布',w:0.05,s:0.05}, {n:'课时去重',w:0.05,s:0.05}, {n:'预备Coach辅导',w:0.05,s:0.05}, {n:'Seed活跃度',w:0.05,s:0.05}, {n:'知鸟话术',w:0.05,s:0.05}, {n:'知鸟演示',w:0.05,s:0.04}, {n:'AEP月考',w:0.05,s:0.05}] },
+    '韦琪琪': { total:0.97, items:[{n:'门店协作配合',w:0.2,s:0.2}, {n:'总服务时长',w:0.45,s:0.45}, {n:'课程种类分布',w:0.05,s:0.04}, {n:'课时去重',w:0.05,s:0.05}, {n:'预备Coach辅导',w:0.05,s:0.05}, {n:'Seed活跃度',w:0.05,s:0.04}, {n:'知鸟话术',w:0.05,s:0.04}, {n:'知鸟演示',w:0.05,s:0.05}, {n:'AEP月考',w:0.05,s:0.05}] },
+    '吉敏': { total:0.95, items:[{n:'门店协作配合',w:0.2,s:0.2}, {n:'总服务时长',w:0.45,s:0.45}, {n:'课程种类分布',w:0.05,s:0.05}, {n:'课时去重',w:0.05,s:0.05}, {n:'预备Coach辅导',w:0.05,s:0.05}, {n:'Seed活跃度',w:0.05,s:0.03}, {n:'知鸟话术',w:0.05,s:0.04}, {n:'知鸟演示',w:0.05,s:0.03}, {n:'AEP月考',w:0.05,s:0.05}] },
+    '胡善淳': { total:1.015, items:[{n:'门店协作配合',w:0.2,s:0.2}, {n:'总服务时长',w:0.45,s:0.495}, {n:'课程种类分布',w:0.05,s:0.05}, {n:'课时去重',w:0.05,s:0.05}, {n:'预备Coach辅导',w:0.05,s:0.05}, {n:'Seed活跃度',w:0.05,s:0.04}, {n:'知鸟话术',w:0.05,s:0.04}, {n:'知鸟演示',w:0.05,s:0.04}, {n:'AEP月考',w:0.05,s:0.05}] },
+    '乔子晏': { total:0.94, items:[{n:'门店协作配合',w:0.2,s:0.2}, {n:'总服务时长',w:0.45,s:0.45}, {n:'课程种类分布',w:0.05,s:0.04}, {n:'课时去重',w:0.05,s:0.05}, {n:'预备Coach辅导',w:0.05,s:0.05}, {n:'Seed活跃度',w:0.05,s:0.0}, {n:'知鸟话术',w:0.05,s:0.05}, {n:'知鸟演示',w:0.05,s:0.05}, {n:'AEP月考',w:0.05,s:0.05}] },
+    '张晨昱': { total:0.87, items:[{n:'门店协作配合',w:0.2,s:0.2}, {n:'总服务时长',w:0.45,s:0.36}, {n:'课程种类分布',w:0.05,s:0.04}, {n:'课时去重',w:0.05,s:0.05}, {n:'预备Coach辅导',w:0.05,s:0.05}, {n:'Seed活跃度',w:0.05,s:0.03}, {n:'知鸟话术',w:0.05,s:0.04}, {n:'知鸟演示',w:0.05,s:0.05}, {n:'AEP月考',w:0.05,s:0.05}] },
+    '薛海涛': { total:1.0, items:[{n:'门店协作配合',w:0.2,s:0.2}, {n:'总服务时长',w:0.45,s:0.45}, {n:'课程种类分布',w:0.05,s:0.05}, {n:'课时去重',w:0.05,s:0.05}, {n:'预备Coach辅导',w:0.05,s:0.05}, {n:'Seed活跃度',w:0.05,s:0.05}, {n:'知鸟话术',w:0.05,s:0.05}, {n:'知鸟演示',w:0.05,s:0.05}, {n:'AEP月考',w:0.05,s:0.05}] },
+    '董伊雯': { total:1.135, items:[{n:'门店协作配合',w:0.2,s:0.2}, {n:'总服务时长',w:0.45,s:0.585}, {n:'课程种类分布',w:0.05,s:0.05}, {n:'课时去重',w:0.05,s:0.05}, {n:'预备Coach辅导',w:0.05,s:0.05}, {n:'Seed活跃度',w:0.05,s:0.05}, {n:'知鸟话术',w:0.05,s:0.05}, {n:'知鸟演示',w:0.05,s:0.05}, {n:'AEP月考',w:0.05,s:0.05}] },
+    '侯坚明': { total:0.99, items:[{n:'门店协作配合',w:0.2,s:0.2}, {n:'总服务时长',w:0.45,s:0.45}, {n:'课程种类分布',w:0.05,s:0.05}, {n:'课时去重',w:0.05,s:0.05}, {n:'预备Coach辅导',w:0.05,s:0.05}, {n:'Seed活跃度',w:0.05,s:0.05}, {n:'知鸟话术',w:0.05,s:0.05}, {n:'知鸟演示',w:0.05,s:0.04}, {n:'AEP月考',w:0.05,s:0.05}] },
+    '刘川平': { total:0.98, items:[{n:'门店协作配合',w:0.2,s:0.2}, {n:'总服务时长',w:0.45,s:0.45}, {n:'课程种类分布',w:0.05,s:0.04}, {n:'课时去重',w:0.05,s:0.05}, {n:'预备Coach辅导',w:0.05,s:0.05}, {n:'Seed活跃度',w:0.05,s:0.04}, {n:'知鸟话术',w:0.05,s:0.05}, {n:'知鸟演示',w:0.05,s:0.05}, {n:'AEP月考',w:0.05,s:0.05}] }
+  }
+};
+
+// ---------- 客流→课时目标 映射（边界：左闭右开，边界值归入较高档）----------
+function getTargetByFlow(flow) {
+    if (flow < 1200) return {hour:3.5, group:"1200-",     label:"<1200",     tier:"新兴店", rangeText:"客流 < 1200"};
+    if (flow < 2000) return {hour:4.0, group:"1200-2000", label:"1200~2000", tier:"成长店", rangeText:"1200 ≤ 客流 < 2000"};
+    if (flow < 3500) return {hour:4.5, group:"2000-3500", label:"2000~3500", tier:"主力店", rangeText:"2000 ≤ 客流 < 3500"};
+    return            {hour:5.0, group:"3500+",     label:"3500+",     tier:"人气店", rangeText:"客流 ≥ 3500"};
+}
+function tierFromGroup(flowGroup) {
+    switch(flowGroup){
+        case "3500+":     return {hour:5.0, label:"3500+",     tier:"人气店"};
+        case "2000-3500": return {hour:4.5, label:"2000~3500", tier:"主力店"};
+        case "1200-2000": return {hour:4.0, label:"1200~2000", tier:"成长店"};
+        default:          return {hour:3.5, label:"<1200",     tier:"新兴店"};
+    }
+}
+function storeInfo(idx){
+    var s = stores[idx];
+    var t = tierFromGroup(s.flowGroup);
+    return {
+        name:s.name, coach:(s.coach||""), flowGroup:s.flowGroup,
+        targetHour:(typeof s.targetHour === "number" ? s.targetHour : t.hour),
+        flowLabel:t.label, tier:t.tier
+    };
+}
+function isBoundaryValue(v){ return v===1200 || v===2000 || v===3500; }
+
+// ---------- 状态变量 ----------
+var currentStoreIdx = 0;
+var hourAchieve = 100;
+var mysteryCoeff = 1.3;
+var courseChecked = true, dedupChecked = true, prepChecked = true;
+var aepChecked = true, teamChecked = true;
+var seedWeeks = [true,true,true,true];
+var talkWeeks = [true,true,true,true];
+var demoWeeks = [true,true,true,true];
+var activeFlowFilter = "ALL";
+
+// ================================================================
+//  ★ 门店锁定（?store= 参数隔离，仅软隔离）
+// ================================================================
+var LOCK_STORE = (function(){
+  try { var p = new URLSearchParams(location.search).get('store'); return p ? p.trim() : ''; }
+  catch(e){ return ''; }
+})();
+
+function resolveLockStoreIdx(){
+  if(!LOCK_STORE) return -1;
+  var n = LOCK_STORE.replace(/\s+/g,'');
+  for(var i=0;i<stores.length;i++){ if((stores[i].name||'').replace(/\s+/g,'')===n) return i; }
+  if(n.length>=2){ for(var i=0;i<stores.length;i++){ if((stores[i].name||'').replace(/\s+/g,'').indexOf(n)===0) return i; } }
+  return -1;
+}
+function ensureStoreLockBanner(){
+  var sb = document.querySelector('.left-panel .step-block') || document.querySelector('.step-block');
+  if(!sb) return null;
+  var banner = document.getElementById('storeLockBanner');
+  if(!banner){
+    banner = document.createElement('div');
+    banner.id = 'storeLockBanner';
+    var head = sb.querySelector('.step-head');
+    if(head) head.insertAdjacentElement('afterend', banner);
+    else sb.insertBefore(banner, sb.firstChild);
+  }
+  return banner;
+}
+function applyStoreLock(){
+  if(!LOCK_STORE) return;
+  var ss = document.getElementById('storeSelect');
+  var idx = resolveLockStoreIdx();
+  var banner = ensureStoreLockBanner();
+  if(idx < 0){
+    if(banner){ banner.textContent = '未找到门店：' + LOCK_STORE + '（请检查链接参数 store=）'; banner.className = 'store-lock-banner notfound'; }
+    return;
+  }
+  currentStoreIdx = idx;
+  if(ss){
+    ss.value = idx;
+    ss.disabled = true;
+    Array.prototype.forEach.call(ss.options, function(o,i){ if(i !== idx){ o.disabled = true; o.style.display = 'none'; } });
+  }
+  // 锁定模式保留月份切换：用户可自由查看各月（含当月），工资条仅在选中上月时可导出
+  var fm = document.querySelector('.left-panel .step-block .collapsible');
+  if(fm) fm.style.display = 'none';
+  if(banner){ banner.textContent = '已锁定门店：' + stores[idx].name + '（仅查看本店 · 切到「上月」可导出工资条）'; banner.className = 'store-lock-banner locked'; }
+  // 锁定模式下仅保留「导出工资条PDF」入口，隐藏数据管理类按钮
+  ['importBtn','exportBtn','restoreBtn','clearBtn','freezeBtn','freezeBadge'].forEach(function(id){
+    var el = document.getElementById(id);
+    if(el) el.style.display = 'none';
+  });
+}
+
+// ================================================================
+//  ★ 门店看板渲染
+// ================================================================
+function getFlowCssClass(flowGroup) {
+    if(flowGroup === "3500+") return "sc-flow-3500p";
+    if(flowGroup === "2000-3500") return "sc-flow-2000m";
+    if(flowGroup === "1200-2000") return "sc-flow-1200m";
+    return "sc-flow-1200l";
+}
+function getFlowLabelClass(flowGroup) {
+    if(flowGroup === "3500+") return "fl-3500p";
+    if(flowGroup === "2000-3500") return "fl-2000m";
+    if(flowGroup === "1200-2000") return "fl-1200m";
+    return "fl-1200l";
+}
+
+function renderStoreGrid() {
+    var grid = document.getElementById("storeGrid");
+    if(!grid) return; // 看板已移除，下拉选择仍可用
+    var visibleCount = 0;
+
+    grid.innerHTML = "";
+    stores.forEach(function(s, idx) {
+        if(activeFlowFilter !== "ALL" && s.flowGroup !== activeFlowFilter) return;
+        visibleCount++;
+
+        var card = document.createElement("div");
+        var info = storeInfo(idx);
+        card.className = "store-card" + (idx === currentStoreIdx ? " selected" : "");
+        card.innerHTML =
+            '<div class="sc-flow-tag '+getFlowCssClass(s.flowGroup)+'"></div>'
+            +'<div class="sc-name">'+s.name+'</div>'
+            +'<div class="sc-meta">'
+            +'  <span class="sc-target">'+info.targetHour+'h</span>'
+            +'  <span class="sc-flow-label '+getFlowLabelClass(s.flowGroup)+'">'+info.flowLabel+'</span>'
+            +'</div>';
+
+        (function(i){ card.onclick = function(){ selectStore(i); }; })(idx);
+        grid.appendChild(card);
+    });
+
+    document.getElementById("sdStoreCount").innerText = visibleCount;
+}
+
+function selectStore(idx) {
+    currentStoreIdx = idx;
+    renderStoreGrid();
+    document.getElementById("storeSelect").value = idx;
+    applySyncedRateIfAny();
+    applySyncedMysteryIfAny();
+    fullRefresh();
+    syncMatcherToStore();
+    updateGapPlanner();
+}
+
+function updateStats() {
+    if(!document.getElementById("statTotal")) return; // 看板已移除
+    var c3500=0,c2000m=0,c1200m=0,c1200l=0;
+    stores.forEach(function(s){
+        if(s.flowGroup==="3500+") c3500++;
+        else if(s.flowGroup==="2000-3500") c2000m++;
+        else if(s.flowGroup==="1200-2000") c1200m++;
+        else c1200l++;
+    });
+    document.getElementById("statTotal").innerText = stores.length;
+    document.getElementById("stat3500p").innerText = c3500;
+    document.getElementById("stat2000m").innerText = c2000m;
+    document.getElementById("stat1200m").innerText = c1200m;
+    document.getElementById("stat1200l").innerText = c1200l;
+}
+
+function initStoreDashboard() {
+    // 筛选按钮事件
+    document.querySelectorAll(".flow-filter-btn").forEach(function(btn){
+        btn.addEventListener("click", function(){
+            document.querySelectorAll(".flow-filter-btn").forEach(function(b){ b.classList.remove("active"); });
+            this.classList.add("active");
+            activeFlowFilter = this.getAttribute("data-flow");
+            renderStoreGrid();
+        });
+    });
+    renderStoreGrid();
+    updateStats();
+}
+
+// ================================================================
+//  ★ 薪资核心计算逻辑
+// ================================================================
+function getHourCoefficient(a) {
+    // ⚠️ 10% 阶梯规则（按用户2026.7 KPI 原图，非线性）：
+    // < 80%       → 0
+    // [80,  100)  → 0.80
+    // [100, 110)  → 1.00
+    // [110, 120)  → 1.10
+    // [120, 130)  → 1.20
+    // ≥ 130%      → 1.30 （封顶）
+    if(a < 80)  return 0;
+    if(a < 100) return 0.80;
+    if(a < 110) return 1.00;
+    if(a < 120) return 1.10;
+    if(a < 130) return 1.20;
+    return 1.30;
+}
+function getCoachEarn() { return COACH_BASE * getHourCoefficient(hourAchieve); }
+function getWeeklyAmount(base, weeks) { var w = base / 4; return weeks.reduce(function(s,v){return s+(v?w:0);},0); }
+function getOtherPerformance() {
+    var t = 0;
+    if(courseChecked) t += COURSE_AMT;
+    if(dedupChecked) t += DEDUP_AMT;
+    if(prepChecked) t += PREP_AMT;
+    t += getWeeklyAmount(SEED_BASE,seedWeeks)+getWeeklyAmount(TALK_BASE,talkWeeks)+getWeeklyAmount(DEMO_BASE,demoWeeks);
+    if(aepChecked) t += AEP_AMT;
+    return t;
+}
+function getCollabAmount() { return teamChecked ? COLLAB_AMT : 0; }
+// 绩效评分覆盖：若当前月+当前店在 PERF_SCORE_TABLE 中有合计系数，则绩效工资 = 3500 × 系数，覆盖 granular 分项
+function getPerfScoreOverride(){
+  var tbl = PERF_SCORE_TABLE[currentMonth];
+  if(!tbl) return null;
+  var coach = (stores[currentStoreIdx] && stores[currentStoreIdx].coach) || "";
+  if(coach === "" || tbl[coach] === undefined) return null;
+  return tbl[coach].total;
+}
+// 绩效评分明细：返回子项数组 [{n: 子项名, w: 权重, s: 实得分}, ...]，无则返回 null
+function getPerfScoreDetail(){
+  var tbl = PERF_SCORE_TABLE[currentMonth];
+  if(!tbl) return null;
+  var coach = (stores[currentStoreIdx] && stores[currentStoreIdx].coach) || "";
+  if(coach === "" || tbl[coach] === undefined) return null;
+  return tbl[coach].items;
+}
+function getBasePerformance() {
+  var ov = getPerfScoreOverride();
+  if(ov !== null) return BASE_SALARY * ov;
+  return getCoachEarn() + getOtherPerformance() + getCollabAmount();
+}
+function getMysteryAdjustment(base) { return base * 0.30 * (mysteryCoeff - 1); }
+function getFinalPerformance() { var b=getBasePerformance(); return b + getMysteryAdjustment(b); }
+function calcTax(gross) {
+    var t = Math.max(0, gross - INSURANCE - 5000);
+    if(t <= 3000) return t * 0.03;
+    if(t <= 12000) return t * 0.10 - 210;
+    if(t <= 25000) return t * 0.20 - 1410;
+    return t * 0.25 - 2660;
+}
+
+function fullRefresh() {
+    var s = storeInfo(currentStoreIdx);
+    if(s) {
+        document.getElementById("targetHourSpan").innerText = s.targetHour;
+        document.getElementById("actualHourSpan").innerText = ((s.targetHour*hourAchieve)/100).toFixed(1);
+    }
+    document.getElementById("achievePercentShow").innerText = hourAchieve + "%";
+    document.getElementById("hourCoeffShow").innerText = (getHourCoefficient(hourAchieve)*100).toFixed(0)+"%";
+    // 🎯 滑块系数档位徽标（体现 1.3 需 ≥130% 解锁、超出封顶）
+    var _zi = zoneIndex(hourAchieve);
+    var _z = ZONE_STEPS[_zi];
+    var _szBadge = document.getElementById("sliderZoneBadge");
+    if(_szBadge){
+        var _coach = Math.round(COACH_BASE * _z.coeff);
+        var _thresh = (_zi < 5)
+            ? "⚠️ 1.3 系数需达成率 ≥130% 才解锁，当前距 130% 还差 <b>"+(130-hourAchieve)+"</b> 个百分点"
+            : "✅ 已 ≥130%，系数封顶 <b>×1.3</b>，超出部分（"+hourAchieve+"%＞130%）不再升档";
+        _szBadge.innerHTML = "🎯 系数 <b style='color:"+_z.color+"'>"+_z.coeffLabel+"</b> · 当前档 <b style='color:"+_z.color+"'>"+_z.label+"</b>（"+_z.tip+"）· Coach项目 <b>¥"+_coach.toLocaleString()+"</b><span class='sz-thresh'>"+_thresh+"</span>";
+    }
+    document.getElementById("coachEarnSpan").innerText = (getPerfScoreOverride()!==null) ? "—" : getCoachEarn().toFixed(2);
+    document.getElementById("collabEarnSpan").innerText = (getPerfScoreOverride()!==null) ? "—" : getCollabAmount().toFixed(2);
+
+    var base = getBasePerformance();
+    document.getElementById("basePerfSpan").innerText = base.toFixed(2);
+    var adj = getMysteryAdjustment(base);
+    document.getElementById("mysteryAdjustSpan").innerText = (adj>=0?'+':'') + adj.toFixed(2);
+    document.getElementById("finalPerfSpan").innerText = getFinalPerformance().toFixed(2);
+    var gross = BASE_SALARY + getFinalPerformance();
+    document.getElementById("grossSpan").innerText = gross.toFixed(2);
+    var tax = calcTax(gross);
+    document.getElementById("taxSpan").innerText = tax.toFixed(2);
+    // ===== 到手工资 Hero（顶部实时） =====
+    var net = gross - INSURANCE - tax;
+    document.getElementById("netHeroAmount").innerText = net.toFixed(2);
+    document.getElementById("netHeroGross").innerText = gross.toFixed(2);
+    document.getElementById("netHeroIns").innerText = "-" + INSURANCE.toFixed(2);
+    document.getElementById("netHeroTax").innerText = "-" + tax.toFixed(2);
+    document.getElementById("netHeroPerf").innerText = getFinalPerformance().toFixed(2);
+    var sInfo = storeInfo(currentStoreIdx);
+    document.getElementById("netHeroStore").innerText = sInfo ? ("🏪 " + sInfo.name + " · 目标 " + sInfo.targetHour + "h · " + sInfo.flowLabel) : "—";
+    applyPerfOverrideUI();
+}
+
+// 绩效评分覆盖 UI：当当前月+店有导入的合计系数时，禁用 granular 分项输入并展示来源徽标
+function applyPerfOverrideUI(){
+    var badge = document.getElementById("perfScoreBadge");
+    var ov = getPerfScoreOverride();
+    var ovActive = (ov !== null);
+    ["courseTypeCheckbox","dedupCheckbox","prepCoachCheckbox","aepCheckbox","teamCheckbox"].forEach(function(id){
+        var el = document.getElementById(id); if(el) el.disabled = ovActive;
+    });
+    ["seedWeeks","talkWeeks","demoWeeks"].forEach(function(cid){
+        var c = document.getElementById(cid);
+        if(c){ c.querySelectorAll("input[type=checkbox]").forEach(function(cb){ cb.disabled = ovActive; }); }
+    });
+    if(badge){
+        if(ovActive){
+            var lock = isFrozen(currentMonth) ? " 🔒" : "";
+            badge.style.display = "block"; badge.classList.add("active");
+            badge.innerHTML = "📋 绩效评分已导入（合计系数 <b>"+ov.toFixed(3)+"</b>）· 绩效工资 = 3500 × 系数 = <b>"+(BASE_SALARY*ov).toFixed(2)+"</b> 元"+lock
+                + "<br><span style='font-size:0.72rem;color:#888;'>来源：Coach 7月绩效评分.xlsx · 评估人打分 · 已覆盖 granular 分项（暗访奖惩仍叠加）</span>";
+        } else {
+            badge.style.display = "none"; badge.classList.remove("active");
+        }
+    }
+}
+
+function buildWeekCheckboxes(containerId, weeks) {
+    var c = document.getElementById(containerId);
+    if(!c) return;
+    c.innerHTML = "";
+    for(var i=0;i<4;i++){
+        var d = document.createElement("div"); d.className = "week-check";
+        var cb = document.createElement("input"); cb.type="checkbox"; cb.checked=weeks[i];
+        (function(ii,w){ cb.addEventListener("change",function(e){w[ii]=e.target.checked;fullRefresh();}); })(i,weeks);
+        var lb = document.createElement("span"); lb.innerText="第"+(i+1)+"周";
+        d.appendChild(cb); d.appendChild(lb); c.appendChild(d);
+    }
+    if(getPerfScoreOverride() !== null){ c.querySelectorAll("input[type=checkbox]").forEach(function(cb){ cb.disabled = true; }); }
+}
+
+// ================================================================
+//  ★ 多月份切换 + 每月状态独立保存（localStorage 按月份隔离）
+// ================================================================
+function lsKey(m){ return "coachcalc:state:" + m; }
+
+function populateStoreSelect(){
+    var ss = document.getElementById("storeSelect");
+    ss.innerHTML = "";
+    stores.forEach(function(s,i){
+        var info = storeInfo(i);
+        var o = document.createElement("option"); o.value = i;
+        o.textContent = info.name + (info.coach ? ("（" + info.coach + " · ") : "（") + info.targetHour + "h · " + info.flowLabel + "）";
+        ss.appendChild(o);
+    });
+    ss.value = currentStoreIdx;
+}
+
+function saveCurrentMonthState(){
+    try {
+        var st = {
+            storeIdx: currentStoreIdx,
+            hourAchieve: hourAchieve,
+            mysteryCoeff: mysteryCoeff,
+            courseChecked: courseChecked, dedupChecked: dedupChecked,
+            prepChecked: prepChecked, aepChecked: aepChecked, teamChecked: teamChecked,
+            seedWeeks: seedWeeks.slice(), talkWeeks: talkWeeks.slice(), demoWeeks: demoWeeks.slice(),
+            gapInput: document.getElementById("gapInput").value
+            // 注：gapDaysWorked / gapDays 为日期派生值，不持久化（每次按真实日期重算）
+        };
+        localStorage.setItem(lsKey(currentMonth), JSON.stringify(st));
+    } catch(e){ /* localStorage 不可用时静默 */ }
+}
+
+function loadMonthState(m){
+    var def = {
+        storeIdx: 0, hourAchieve: 100, mysteryCoeff: 1.3,
+        courseChecked: true, dedupChecked: true, prepChecked: true, aepChecked: true, teamChecked: true,
+        seedWeeks: [true,true,true,true], talkWeeks: [true,true,true,true], demoWeeks: [true,true,true,true],
+        gapInput: ""
+    };
+    var st = def;
+    try {
+        var raw = localStorage.getItem(lsKey(m));
+        if(raw) st = Object.assign({}, def, JSON.parse(raw));
+    } catch(e){}
+    currentStoreIdx = (typeof st.storeIdx === "number" && st.storeIdx < stores.length) ? st.storeIdx : 0;
+    hourAchieve     = st.hourAchieve;
+    mysteryCoeff    = st.mysteryCoeff;
+    courseChecked   = st.courseChecked;  dedupChecked = st.dedupChecked;
+    prepChecked     = st.prepChecked;    aepChecked   = st.aepChecked;     teamChecked = st.teamChecked;
+    seedWeeks       = st.seedWeeks.slice();  talkWeeks = st.talkWeeks.slice();  demoWeeks = st.demoWeeks.slice();
+
+    // 应用 DOM 控件
+    document.getElementById("hourSlider").value = hourAchieve;
+    document.getElementById("hourNumber").value = hourAchieve;
+    document.getElementById("courseTypeCheckbox").checked = courseChecked;
+    document.getElementById("dedupCheckbox").checked      = dedupChecked;
+    document.getElementById("prepCoachCheckbox").checked  = prepChecked;
+    document.getElementById("aepCheckbox").checked        = aepChecked;
+    document.getElementById("teamCheckbox").checked       = teamChecked;
+    document.querySelectorAll(".mystery-chip").forEach(function(b){
+        b.classList.toggle("selected", parseFloat(b.getAttribute("data-coeff")) === mysteryCoeff);
+    });
+    buildWeekCheckboxes("seedWeeks", seedWeeks);
+    buildWeekCheckboxes("talkWeeks", talkWeeks);
+    buildWeekCheckboxes("demoWeeks", demoWeeks);
+    document.getElementById("gapInput").value        = st.gapInput;
+    // 注：gapDaysWorked / gapDays 不从此处恢复，改为在 setMonth 中始终按真实日期重算
+}
+
+function setMonth(m){
+    if(m !== currentMonth) saveCurrentMonthState();   // 先保存上一个月份
+    currentMonth = m;
+    stores = MONTH_CONFIGS[m].stores;
+    document.getElementById("monthSwitch").value = m;
+    document.getElementById("versionTag").innerText = MONTH_CONFIGS[m].label + " KPI版";
+    loadMonthState(m);
+    if(LOCK_STORE){ var _li = resolveLockStoreIdx(); if(_li >= 0) currentStoreIdx = _li; }
+    applySyncedRateIfAny();
+    applySyncedMysteryIfAny();
+    populateStoreSelect();
+    renderStoreGrid();
+    applyStoreLock();
+    updateStats();
+    // 📐 规划器预填（仅当无已存值时用当前日期推算）
+    var info = storeInfo(currentStoreIdx);
+    var gi = document.getElementById("gapInput");
+    if(!gi.value) gi.value = (info.targetHour * hourAchieve / 100).toFixed(1);
+    // 📅 已工作天数 / 距离月底天数：始终按真实日期重算（不读取旧持久化值，避免"不随时间变化"）
+    var gd = document.getElementById("gapDaysWorked");
+    gd.value = Math.max(1, getWorkedDaysSoFar());
+    var gn = document.getElementById("gapDays");
+    gn.value = getDaysRemainingInMonth();
+    syncMatcherToStore();
+    updateGapPlanner();
+    fullRefresh();
+    applyFrozenUI();   // 按当前月冻结状态刷新滑块/芯片禁用与徽标
+    updatePdfBtnVisibility();   // 工资条导出入口：仅上个月可见
+}
+
+function initUI() {
+    // 启动：先读旧缓存，再用源码最新基准覆盖 ACHIEVEMENT_TABLE，最后写回配置
+    loadPersistedAchievement();
+    syncAchievementFromConfig();
+    Object.keys(MONTH_CONFIGS).forEach(function(m){ applyAchievementToConfig(m); });
+    syncMysteryFromSeed();
+    loadFrozen();   // 载入冻结状态（首次运行按用户要求冻结7月）
+
+    // 门店下拉（选项由 setMonth → populateStoreSelect 填充）
+    var ss = document.getElementById("storeSelect");
+    ss.addEventListener("change",function(e){
+        selectStore(parseInt(e.target.value));
+    });
+
+    // 月份切换器
+    var ms = document.getElementById("monthSwitch");
+    Object.keys(MONTH_CONFIGS).sort().reverse().forEach(function(k){
+        var o=document.createElement("option"); o.value=k; o.textContent=MONTH_CONFIGS[k].label; ms.appendChild(o);
+    });
+    ms.value = currentMonth;
+    ms.addEventListener("change",function(e){ setMonth(e.target.value); });
+    document.getElementById("flowInput").addEventListener("input", updateFlowMatcher);
+
+    // 📤 导入课时达成表
+    document.getElementById("importBtn").addEventListener("click", function(){
+        document.getElementById("achFileInput").click();
+    });
+    document.getElementById("achFileInput").addEventListener("change", function(e){
+        if(e.target.files && e.target.files[0]) handleAchFile(e.target.files[0]);
+        e.target.value = "";
+    });
+    document.getElementById("importCancel").addEventListener("click", closeImportModal);
+    document.getElementById("importConfirm").addEventListener("click", doImport);
+
+    // 💾 数据备份闭环（铁律2）：导出 / 导入恢复 / 清空（二次确认）
+    document.getElementById("exportBtn").addEventListener("click", exportBackup);
+    document.getElementById("restoreBtn").addEventListener("click", function(){ document.getElementById("restoreFileInput").click(); });
+    // 🧾 一键导出 PDF 工资条
+    document.getElementById("pdfBtn").addEventListener("click", exportPayslipPDF);
+    document.getElementById("restoreFileInput").addEventListener("change", function(e){
+        if(e.target.files && e.target.files[0]) importBackupFile(e.target.files[0]);
+        e.target.value = "";
+    });
+
+    // 🔒 月份冻结 / 解冻（仅在用户单独指令时触发；默认不冻结）
+    document.getElementById("freezeBtn").addEventListener("click", function(){
+      var m=currentMonth;
+      if(isFrozen(m)){
+        if(confirm("确定解冻 "+MONTH_CONFIGS[m].label+" 吗？\n解冻后该月的课时达成率与暗访分可重新编辑、可重新导入。")){ setFrozen(m,false); applyFrozenUI(); toast("🔓 已解冻 "+MONTH_CONFIGS[m].label); }
+      } else {
+        if(confirm("确定冻结 "+MONTH_CONFIGS[m].label+" 吗？\n冻结后该月的课时达成率与暗访分将被锁定：无法手动修改、无法重置、无法重新导入（查看/切月看结果不受影响）。")){ setFrozen(m,true); applyFrozenUI(); toast("🔒 已冻结 "+MONTH_CONFIGS[m].label); }
+      }
+    });
+    document.getElementById("clearBtn").addEventListener("click", openConfirmModal);
+    document.getElementById("confirmCancel").addEventListener("click", closeConfirmModal);
+    document.getElementById("confirmOk").addEventListener("click", function(){ clearAllData(); closeConfirmModal(); });
+
+    document.getElementById("hourSlider").addEventListener("input",function(e){
+        if(isFrozen(currentMonth)){ toast("🔒 本月已冻结，无法手动调整课时达成率"); return; }
+        hourAchieve=parseInt(e.target.value);
+        document.getElementById("hourNumber").value=hourAchieve;
+        sessionOverrides[currentMonth+"|"+currentStoreIdx]=true; refreshSyncedBadge();
+        fullRefresh();
+    });
+    document.getElementById("hourNumber").addEventListener("input",function(e){
+        if(isFrozen(currentMonth)){ toast("🔒 本月已冻结，无法手动调整课时达成率"); return; }
+        hourAchieve=Math.min(150,Math.max(0,parseInt(e.target.value)||0));
+        document.getElementById("hourSlider").value=hourAchieve;
+        sessionOverrides[currentMonth+"|"+currentStoreIdx]=true; refreshSyncedBadge();
+        fullRefresh();
+    });
+
+    // 📐 课时差距规划器
+    document.getElementById("gapInput").addEventListener("input", updateGapPlanner);
+    document.getElementById("gapDaysWorked").addEventListener("input", updateGapPlanner);
+    document.getElementById("gapDays").addEventListener("input", updateGapPlanner);
+
+    var btns=document.querySelectorAll(".mystery-chip");
+    btns.forEach(function(b){
+        b.addEventListener("click",function(){
+            if(isFrozen(currentMonth)){ toast("🔒 本月已冻结，无法手动调整暗访系数"); return; }
+            btns.forEach(function(x){x.classList.remove("selected");});
+            this.classList.add("selected");
+            mysteryCoeff=parseFloat(this.getAttribute("data-coeff"));
+            sessionMysteryOverrides[currentMonth+"|"+currentStoreIdx]=true; refreshMysteryBadge();
+            fullRefresh();
+        });
+    });
+    document.querySelector(".mystery-chip[data-coeff='1.3']")?.classList.add("selected");
+
+    ["courseTypeCheckbox","dedupCheckbox","prepCoachCheckbox","aepCheckbox","teamCheckbox"].forEach(function(id){
+        document.getElementById(id).addEventListener("change",function(e){
+            switch(id){
+                case"courseTypeCheckbox":courseChecked=e.target.checked;break;
+                case"dedupCheckbox":dedupChecked=e.target.checked;break;
+                case"prepCoachCheckbox":prepChecked=e.target.checked;break;
+                case"aepCheckbox":aepChecked=e.target.checked;break;
+                case"teamCheckbox":teamChecked=e.target.checked;break;
+            }
+            fullRefresh();
+        });
+    });
+
+    document.getElementById("resetBtn").addEventListener("click",function(){
+        if(isFrozen(currentMonth)){ toast("🔒 本月已冻结，无法重置课时/暗访数据"); return; }
+        if(getPerfScoreOverride() !== null){ toast("🔒 该店 7 月绩效评分已导入，分项不可重置"); return; }
+        hourAchieve=100; document.getElementById("hourSlider").value=100; document.getElementById("hourNumber").value=100;
+        mysteryCoeff=1.3; btns.forEach(function(b){b.classList.remove("selected");});
+        document.querySelector(".mystery-chip[data-coeff='1.3']")?.classList.add("selected");
+        sessionMysteryOverrides[currentMonth+"|"+currentStoreIdx]=true; refreshMysteryBadge();
+        courseChecked=dedupChecked=prepChecked=aepChecked=teamChecked=true;
+        ["courseTypeCheckbox","dedupCheckbox","prepCoachCheckbox","aepCheckbox","teamCheckbox"].forEach(
+            function(id){document.getElementById(id).checked=true;}
+        );
+        seedWeeks=[true,true,true,true];talkWeeks=[true,true,true,true];demoWeeks=[true,true,true,true];
+        buildWeekCheckboxes("seedWeeks",seedWeeks);buildWeekCheckboxes("talkWeeks",talkWeeks);buildWeekCheckboxes("demoWeeks",demoWeeks);
+        // 规划器恢复默认推算
+        var info = storeInfo(currentStoreIdx);
+        document.getElementById("gapInput").value = (info.targetHour * hourAchieve / 100).toFixed(1);
+        document.getElementById("gapDaysWorked").value = Math.max(1, getWorkedDaysSoFar());
+        document.getElementById("gapDays").value = getDaysRemainingInMonth();
+        updateGapPlanner();
+        fullRefresh();
+    });
+
+    // 关闭/切后台前保存当前月份输入，避免丢失
+    window.addEventListener("beforeunload", saveCurrentMonthState);
+    document.addEventListener("visibilitychange", function(){
+        if(document.visibilityState === "hidden") saveCurrentMonthState();
+    });
+
+    // 载入当前月份（填充门店下拉 + 读取已存输入/默认值 + 预填规划器 + 渲染）
+    setMonth(currentMonth);
+}
+
+// ---------- 客流→课时 自动匹配交互 ----------
+function updateFlowMatcher(){
+    var inp = document.getElementById("flowInput");
+    var raw = parseFloat(inp.value);
+    var resEl = document.getElementById("flowMatchResult");
+    var bdEl = document.getElementById("flowBoundary");
+    if(isNaN(raw) || raw < 0){
+        resEl.innerHTML = '<span class="fm-tier">—</span><span class="fm-arrow">→</span><span class="fm-hour">目标课时 —</span>';
+        bdEl.innerText = "请输入有效客流数值（≥0）";
+        return;
+    }
+    var m = getTargetByFlow(raw);
+    resEl.innerHTML = '<span class="fm-tier">'+m.tier+' '+m.label+'</span><span class="fm-arrow">→</span><span class="fm-hour">目标课时 '+m.hour.toFixed(1)+'h</span>';
+    var note = isBoundaryValue(raw) ? "（边界值，按左闭右开归入较高档）" : "";
+    bdEl.innerText = "命中规则：" + m.rangeText + " → " + m.hour.toFixed(1) + "h" + note;
+}
+function syncMatcherToStore(){
+    var info = storeInfo(currentStoreIdx);
+    var resEl = document.getElementById("flowMatchResult");
+    var bdEl = document.getElementById("flowBoundary");
+    resEl.innerHTML = '<span class="fm-tier">'+info.tier+' '+info.flowLabel+'</span><span class="fm-arrow">→</span><span class="fm-hour">目标课时 '+info.targetHour.toFixed(1)+'h</span>';
+    bdEl.innerText = "已选门店「"+info.name+"」所属分组 → 目标课时 "+info.targetHour.toFixed(1)+"h（可在上方输入客流试算其他门店）";
+    document.getElementById("flowInput").value = "";
+}
+
+// ---------- 📐 课时差距规划器 ----------
+// 法定非工作日集合 = 周一 ∪ 法定假日（用 Set 去重，避免假日恰逢周一被重复扣减）
+function getNonWorkingDays(monthKey){
+    var p = monthKey.split("-");
+    var y = +p[0], mo = (+p[1]) - 1;
+    var lastDay = new Date(y, mo + 1, 0).getDate();
+    var set = new Set();
+    for(var day = 1; day <= lastDay; day++){
+        if(new Date(y, mo, day).getDay() === 1) set.add(day);   // 周一固定休息
+    }
+    var hol = MONTH_HOLIDAYS[monthKey];
+    if(hol){ hol.forEach(function(d){ if(d >= 1 && d <= lastDay) set.add(d); }); }
+    return set;
+}
+// 区间内有效工作日 = 日历天数 − 非工作日数
+function countEffectiveDays(monthKey, startDay, endDay){
+    if(endDay < startDay) return 0;
+    var nw = getNonWorkingDays(monthKey);
+    var nonWork = 0;
+    for(var d = startDay; d <= endDay; d++){ if(nw.has(d)) nonWork++; }
+    return (endDay - startDay + 1) - nonWork;
+}
+
+// 距离月底天数：今天 → 月底 的「有效工作日」（扣除周一 + 法定假日）
+function getDaysRemainingInMonth(){
+    var t = selYM();
+    var key = t.y + "-" + String(t.mo + 1).padStart(2, "0");
+    var lastDay = new Date(t.y, t.mo + 1, 0).getDate();
+    var today = new Date();
+    var monthStart = new Date(t.y, t.mo, 1);
+    var monthEnd = new Date(t.y, t.mo, lastDay);
+    if(today < monthStart) return countEffectiveDays(key, 1, lastDay);  // 未来月份：整月有效工作日
+    if(today > monthEnd)  return 0;                                     // 已结束月份：0
+    return Math.max(0, countEffectiveDays(key, today.getDate(), lastDay)); // 今天→月底（含今天）
+}
+
+// 已工作天数：1号 → 昨天 的「有效工作日」（数据滞后一天，扣除周一 + 法定假日）
+function getWorkedDaysSoFar(){
+    var t = selYM();
+    var key = t.y + "-" + String(t.mo + 1).padStart(2, "0");
+    var lastDay = new Date(t.y, t.mo + 1, 0).getDate();
+    var today = new Date();
+    var monthStart = new Date(t.y, t.mo, 1);
+    var monthEnd = new Date(t.y, t.mo, lastDay);
+    if(today < monthStart) return 0;                                  // 月份未开始
+    var end = new Date(today); end.setDate(end.getDate() - 1);        // 截止昨天（数据滞后）
+    if(end < monthStart) return 0;                                    // 今天才1号，昨天在上月
+    var endDay = (end > monthEnd) ? lastDay : end.getDate();          // 已结束月：算到月底
+    return Math.max(0, countEffectiveDays(key, 1, endDay));
+}
+
+// ---------- 🎯 区间定位器（10%阶梯·形象化定位当前系数档） ----------
+var ZONE_STEPS = [
+    {lo:0,   hi:80,       label:"<80%",      coeff:0,    coeffLabel:"×0",   color:"#ff3b30", tip:"Coach归零"},
+    {lo:80,  hi:100,      label:"80-100%",   coeff:0.80, coeffLabel:"×0.8",  color:"#ff9f0a", tip:"门槛解锁"},
+    {lo:100, hi:110,      label:"100-110%",   coeff:1.00, coeffLabel:"×1.0",  color:"#34c759", tip:"基准达成"},
+    {lo:110, hi:120,      label:"110-120%",   coeff:1.10, coeffLabel:"×1.1",  color:"#30b0c8", tip:"冲刺档"},
+    {lo:120, hi:130,      label:"120-130%",   coeff:1.20, coeffLabel:"×1.2",  color:"#007aff", tip:"高薪档"},
+    {lo:130, hi:Infinity, label:"≥130%",      coeff:1.30, coeffLabel:"×1.3",  color:"#af52de", tip:"封顶档"}
+];
+function zoneIndex(rate){
+    if(rate<80) return 0; if(rate<100) return 1; if(rate<110) return 2;
+    if(rate<120) return 3; if(rate<130) return 4; return 5;
+}
+function renderZoneLocator(A, T){
+    var el = document.getElementById("zoneLocator");
+    if(!el) return;
+    var hasInput = !(isNaN(A) || A < 0);
+    var rate = hasInput ? (A / T) * 100 : 0;
+    var zi = hasInput ? zoneIndex(rate) : -1;
+    var heights = [22, 30, 38, 46, 54, 62];
+    var html = '<div class="zone-steps">';
+    ZONE_STEPS.forEach(function(z, i){
+        var active = (i === zi);
+        html += '<div class="zone-step' + (active ? ' active' : '') + '" style="--c:' + z.color + ';">';
+        html += '<div class="zone-mark">' + (active ? '▲ 你在这' : '') + '</div>';
+        html += '<div class="zone-bar" style="height:' + heights[i] + 'px;">' + z.coeffLabel + '</div>';
+        html += '<div class="zone-range">' + z.label + '</div>';
+        html += '</div>';
+    });
+    html += '</div>';
+    if(hasInput){
+        var z = ZONE_STEPS[zi];
+        var coach = Math.round(COACH_BASE * z.coeff);
+        var next = (zi < 5) ? ZONE_STEPS[zi + 1] : null;
+        var nextStr = next ? ' · 距下一档 <b>' + next.label + '</b> 需月底日均 ≥ <b>' + (T * next.coeff).toFixed(2) + 'h</b>' : ' · 已封顶，无法再升档';
+        html += '<div class="zone-badge">当前区间 <b style="color:' + z.color + ';">' + z.label + '</b>（' + z.tip + '） · 系数 <b>' + z.coeffLabel + '</b> · Coach项目 <b>¥' + coach.toLocaleString() + '</b> <span class="zone-rate">（达成率 ' + rate.toFixed(1) + '%）</span>' + nextStr + '</div>';
+    } else {
+        html += '<div class="zone-badge zone-badge-empty">输入「日均有效服务」后，自动定位当前所处系数档（10%阶梯：0 / 0.8 / 1.0 / 1.1 / 1.2 / 1.3）</div>';
+    }
+    el.innerHTML = html;
+}
+
+function updateGapPlanner(){
+    var inp = document.getElementById("gapInput");
+    var dwInp = document.getElementById("gapDaysWorked");
+    var daysInp = document.getElementById("gapDays");
+    var rateEl = document.getElementById("gapCurrentRate");
+    var headEl = document.getElementById("gapHeadline");
+    var msEl = document.getElementById("gapMilestones");
+    var sumEl = document.getElementById("gapSummary");
+    if(!inp || !dwInp || !rateEl || !msEl || !sumEl || !headEl) return;
+
+    var info = storeInfo(currentStoreIdx);
+    var T = info.targetHour;        // 每日课时目标
+    var A = parseFloat(inp.value);   // 日均有效服务时长（至今）
+
+    // 剩余天数 n 兜底+回填
+    var n = parseInt(daysInp.value);
+    if(isNaN(n) || n < 1){ n = getDaysRemainingInMonth(); daysInp.value = n; }
+    // 已工作天数 d 兜底+回填（默认 当月已过天数−每周一固定休息天数）
+    var d = parseInt(dwInp.value);
+    if(isNaN(d) || d < 1){ d = Math.max(1, getWorkedDaysSoFar()); dwInp.value = d; }
+
+    var milestones = [
+        {pct:80,  label:"🟠 80%门槛",  r:0.80, color:"#ff9f0a"},
+        {pct:100, label:"🟢 100%基准", r:1.00, color:"#34c759"},
+        {pct:130, label:"💎 ≥130%封顶", r:1.30, color:"#007aff"}
+    ];
+
+    // —— 无输入占位 ——
+    if(isNaN(A) || A < 0){
+        rateEl.innerHTML = "📍 <b>"+info.name+"</b> · "+info.flowLabel+" · 目标 "+T.toFixed(2)+"h/天 ｜ 输入日均有效服务时长 →";
+        headEl.className = "gap-headline gh-empty";
+        headEl.innerHTML = "💎 达 ≥130%（封顶档）需月底日均 ≥ <b>"+(T*1.3).toFixed(2)+"h</b> · 输入「日均有效服务+已工作天数」后按正确公式算每天至少保持多少h";
+        renderZoneLocator(A, T);
+        sumEl.innerHTML = "";
+        var html0 = "";
+        milestones.forEach(function(m){
+            var needAvg = T * m.r;
+            var coach = Math.round(COACH_BASE * m.r);
+            html0 += '<div class="gap-ms">'
+                + '<div class="gap-ms-title" style="color:'+m.color+';">'+m.label+'</div>'
+                + '<div class="gap-ms-need">月底日均 ≥ '+needAvg.toFixed(2)+'h</div>'
+                + '<div class="gap-ms-diff gap-ms-diff-bad">—</div>'
+                + '<div class="gap-ms-coach">Coach ¥'+coach.toLocaleString()+'</div>'
+                + '</div>';
+        });
+        msEl.innerHTML = html0;
+        return;
+    }
+
+    // —— 正式渲染：正确公式 X = [需月底日均×(d+n) − A×d] / n ——
+    var curRate = (A / T) * 100;  // 当前日均达成率（快照）
+    var __t = selYM(); var __last = new Date(__t.y, __t.mo + 1, 0).getDate();
+    var totalEff = countEffectiveDays(currentMonth, 1, __last);  // 全月有效工作日 = 月天数 − 周一 − 法定假日
+    rateEl.innerHTML = "📍 <b>"+info.name+"</b> · "+info.flowLabel+" · 目标 "+T.toFixed(2)+"h/天 ｜ 当前日均 "+A.toFixed(2)+"h = "+curRate.toFixed(1)+"% · 已工作 "+d+" 天 · 剩余 "+n+" 天 · 全月有效 <b>"+totalEff+"</b> 天（已扣周一+假日）";
+    renderZoneLocator(A, T);
+
+    // 头条：130% 每天至少保持多少h
+    var need130avg = T * 1.3;
+    var X130 = (need130avg * (d + n) - A * d) / n;
+    if(X130 <= 0.005){
+        headEl.className = "gap-headline gh-reached";
+        headEl.innerHTML = "🎉 ≥130%已锁定！剩余 "+n+" 天即使0课时，月底日均仍 ≥ "+need130avg.toFixed(2)+"h（≥130%封顶档）";
+    } else {
+        var tag = X130 <= A ? "保持节奏即可" : "需加把劲（高于当前日均）";
+        headEl.className = "gap-headline";
+        headEl.innerHTML = "💎 达 ≥130%（封顶档）需月底日均 ≥ <b>"+need130avg.toFixed(2)+"h</b> · 当前 "+A.toFixed(2)+"h×"+d+"天 · 剩余 <b>"+n+"</b>天 · 每天至少保持 <b>"+X130.toFixed(2)+"h</b>（"+tag+"）";
+    }
+
+    var html = "";
+    var summaryParts = [];
+    var allClinched = true;
+    var X130val = X130;
+
+    milestones.forEach(function(m){
+        var needAvg = T * m.r;                          // 月底需达到的日均
+        var X = (needAvg * (d + n) - A * d) / n;       // 剩余每天需保持
+        var clinched = X <= 0.005;
+        var coach = Math.round(COACH_BASE * m.r);
+        if(!clinched) allClinched = false;
+
+        var cls = clinched ? "gap-ms gap-ms-reached" : "gap-ms";
+        var diffStr, diffCls;
+        if(clinched){ diffStr = "✅ 已锁定"; diffCls = "gap-ms-diff gap-ms-diff-ok"; }
+        else {
+            var snap = needAvg - A;  // 当前日均距月底目标的差
+            diffStr = (snap>0?"当前日均距目标还差 ":"当前日均已超目标 ")+Math.abs(snap).toFixed(2)+"h";
+            diffCls = "gap-ms-diff gap-ms-diff-bad";
+        }
+
+        var perDayHtml = "";
+        if(!clinched){
+            var perDayCls = X > A ? "gap-ms-perday gap-ms-perday-zero" : "gap-ms-perday";
+            perDayHtml = '<div class="'+perDayCls+'">📅 剩余每天 ≥ '+X.toFixed(2)+'h</div>';
+            if(m.pct === 130){
+                summaryParts.push("冲刺130%封顶：剩余 "+n+" 天每天 ≥ <b>"+X.toFixed(2)+"h</b>");
+            } else if(m.pct === 100){
+                summaryParts.push("保100%基准：剩余每天 ≥ <b>"+X.toFixed(2)+"h</b>");
+            }
+        }
+
+        html += '<div class="'+cls+'">'
+            + '<div class="gap-ms-title" style="color:'+m.color+';">'+m.label+'</div>'
+            + '<div class="gap-ms-need">月底日均 ≥ '+needAvg.toFixed(2)+'h</div>'
+            + '<div class="'+diffCls+'">'+diffStr+'</div>'
+            + perDayHtml
+            + '<div class="gap-ms-coach">Coach ¥'+coach.toLocaleString()+'</div>'
+            + '</div>';
+    });
+    msEl.innerHTML = html;
+
+    // —— 摘要+建议 ——
+    if(allClinched){
+        sumEl.innerHTML = "🎉 全部目标已锁定！当前日均 "+curRate.toFixed(1)+"%，剩余即使0课时也可达成。";
+        sumEl.style.color = "#1a7a37"; sumEl.style.background = "#f0fff4";
+    } else {
+        var advice = "";
+        if(curRate < 80) advice = "⚠️ 当前Coach项目为0！优先达成80%门槛可解锁 ¥1,260";
+        else if(curRate < 100) advice = "💡 再冲100%可多拿 ¥315/月（¥1,260→¥1,575）";
+        else if(curRate < 110) advice = "💡 再冲110%可多拿 ¥158/月（¥1,575→¥1,733）";
+        else if(curRate < 120) advice = "💡 再冲120%可多拿 ¥158/月（¥1,733→¥1,890）";
+        else if(curRate < 130) advice = "💡 再冲130%封顶可多拿 ¥158/月（¥1,890→¥2,048）";
+        var warn = "";
+        if(X130val > 1.0) warn = "<br>⚠️ 每天"+X130val.toFixed(2)+"h目标较高，建议优先排私教课程确保时长";
+        sumEl.innerHTML = "📅 已工作 <b>"+d+"</b> 天 · 剩余 <b>"+n+"</b> 天 · " + summaryParts.join(" ｜ ")
+            + "<br>" + advice + warn
+            + "<br>📌 日均有效服务=课程时长+门店支持(≤总时长30%封顶) · 目标为每日课时目标 · 公式 X=[需月底日均×(d+n)−A×d]/n";
+        sumEl.style.color = "#007aff"; sumEl.style.background = "#fff";
+    }
+}
+
+// ---------- ⚡ 达成率×暗访分 速查表渲染 ----------
+function renderLookupTable(){
+    var grid = document.getElementById("lookupGrid");
+    if(!grid) return;
+    var rates = [0, 80, 100, 130];
+    var cols = [
+        {label:"<60分",coeff:0.6},
+        {label:"60~70",coeff:0.9},
+        {label:"71~80",coeff:1.0},
+        {label:"81~99",coeff:1.2},
+        {label:"100分",coeff:1.3}
+    ];
+    // 表头行
+    var hRow = document.createElement("div"); hRow.className = "lookup-row";
+    hRow.innerHTML = '<div class="lookup-cell lookup-header">达成\\暗访</div>';
+    cols.forEach(function(c){
+        var cell = document.createElement("div");
+        cell.className = "lookup-cell lookup-header"; cell.textContent = c.label;
+        hRow.appendChild(cell);
+    });
+    grid.appendChild(hRow);
+    // 数据行
+    rates.forEach(function(rate){
+        var row = document.createElement("div"); row.className = "lookup-row";
+        var labelCell = document.createElement("div");
+        labelCell.className = "lookup-row-label"; labelCell.textContent = rate + "%";
+        row.appendChild(labelCell);
+        cols.forEach(function(c){
+            var b = COACH_BASE * getHourCoefficient(rate)
+                + (COURSE_AMT+DEDUP_AMT+PREP_AMT) + SEED_BASE + TALK_BASE + DEMO_BASE + AEP_AMT
+                + COLLAB_AMT;
+            var fp = b + b * 0.30 * (c.coeff - 1);
+            var gross = BASE_SALARY + fp;
+            var t = Math.max(0, gross - INSURANCE - 5000);
+            if(t <= 3000) t *= 0.03; else if(t <= 12000) t = t*0.10 - 210;
+            else if(t <= 25000) t = t*0.20 - 1410; else t = t*0.25 - 2660;
+            var netVal = Math.round(gross - INSURANCE - t);
+            var cell = document.createElement("div");
+            cell.className = "lookup-cell";
+            cell.textContent = netVal.toLocaleString();
+            // 高亮极值
+            if(rate===130 && c.coeff===1.3){ cell.className += " lk-best"; }
+            else if(rate===0 && c.coeff===0.6){ cell.className += " lk-worst"; }
+            else if(rate>=100 && c.coeff>=1.2){ cell.className += " lk-mid"; }
+            row.appendChild(cell);
+        });
+        grid.appendChild(row);
+    });
+}
+
+
+
+// ================================================================
+//  ★ 上传课时达成表：自动解析引擎（xlsx/csv → 计算器）
+// ================================================================
+var ACHIEVEMENT_TABLE = {};          // { monthKey: { storeName: {rate,target,daysWorked,coach,effHours,tier} } }
+var sessionOverrides = {};            // { "monthKey|idx": true } 本次会话内手动改过滑块
+function normName(n){ return String(n==null?"":n).replace(/^(onezero美承|美承|onezero)/,"").replace(/\s/g,""); }
+function tierToFlowGroup(t){
+    if(!t) return null; t=String(t);
+    if(t.indexOf("3500以上")>=0 || t.trim()==="3500+") return "3500+";
+    if(t.indexOf("2000-3500")>=0) return "2000-3500";
+    if(t.indexOf("1200-2000")>=0) return "1200-2000";
+    return "1200-";
+}
+function lsAchKey(m){ return "coachcalc:ach:" + m; }
+function loadPersistedAchievement(){
+    try { Object.keys(MONTH_CONFIGS).forEach(function(m){
+        var raw = localStorage.getItem(lsAchKey(m));
+        if(raw) ACHIEVEMENT_TABLE[m] = JSON.parse(raw);
+    }); } catch(e){}
+}
+function persistAchievement(){
+    try { Object.keys(ACHIEVEMENT_TABLE).forEach(function(m){
+        localStorage.setItem(lsAchKey(m), JSON.stringify(ACHIEVEMENT_TABLE[m]));
+    }); } catch(e){}
+}
+// 持久化上传表 → 写回各月 store 配置（coach/目标/档位/达成率）
+function applyAchievementToConfig(m){
+    if(!ACHIEVEMENT_TABLE[m]) return;
+    MONTH_CONFIGS[m].stores.forEach(function(s){
+        var e = ACHIEVEMENT_TABLE[m][s.name];
+        if(e){
+            s.coach=e.coach; s.flowGroup=e.tier; s.targetHour=e.target;
+            s.achievedRate=e.rate; s.daysWorked=e.daysWorked; s.effHours=e.effHours;
+        }
+    });
+}
+// 配置里内嵌的 achievedRate（如7月/8月真实数据）→ 作为最新基准写进 ACHIEVEMENT_TABLE
+// 强制覆盖旧 localStorage 中可能存在的脏数据，确保源码/Excel 为唯一可信来源
+function syncAchievementFromConfig(){
+    Object.keys(MONTH_CONFIGS).forEach(function(m){
+        MONTH_CONFIGS[m].stores.forEach(function(s){
+            if(s.achievedRate!=null){
+                ACHIEVEMENT_TABLE[m] = ACHIEVEMENT_TABLE[m] || {};
+                ACHIEVEMENT_TABLE[m][s.name] = {
+                    rate:s.achievedRate, target:s.targetHour, daysWorked:s.daysWorked,
+                    coach:s.coach, effHours:s.effHours, tier:s.flowGroup
+                };
+            }
+        });
+    });
+}
+function getSyncedRate(m, idx){
+    var s = MONTH_CONFIGS[m].stores[idx];
+    return (ACHIEVEMENT_TABLE[m] && ACHIEVEMENT_TABLE[m][s.name]) ? ACHIEVEMENT_TABLE[m][s.name].rate : null;
+}
+// 选中门店时：若上传表有该店真实达成率且本次会话未手动调过 → 自动填入滑块
+function applySyncedRateIfAny(){
+    var key = currentMonth + "|" + currentStoreIdx;
+    var synced = getSyncedRate(currentMonth, currentStoreIdx);
+    if(synced != null && !sessionOverrides[key]){
+        hourAchieve = synced;
+        var hs = document.getElementById("hourSlider"); if(hs) hs.value = hourAchieve;
+        var hn = document.getElementById("hourNumber"); if(hn) hn.value = hourAchieve;
+    }
+    refreshSyncedBadge();
+}
+function refreshSyncedBadge(){
+    var el = document.getElementById("achSyncedBadge"); if(!el) return;
+    var key = currentMonth + "|" + currentStoreIdx;
+    var rate = getSyncedRate(currentMonth, currentStoreIdx);
+    if(rate == null){ el.style.display = "none"; return; }
+    el.style.display = "block";
+    if(sessionOverrides[key]) el.innerHTML = "📊 上传表基准 <b>" + rate + "%</b> · <span class='ovr'>已手动调整（拖回可复原）</span>";
+    else el.innerHTML = "📊 已同步上传表：达成率 <b>" + rate + "%</b>";
+    if(isFrozen(currentMonth)) el.innerHTML += " · 🔒已冻结";
+}
+
+// ===== 暗访分同步引擎 =====
+// 数据来源：26Q4-7月服务接待复盘2.0.pdf（用户 2026-08-05 提供），抽取全公司34家门店7月服务体验总分
+// 系数规则（与计算器暗访芯片一致）：<60→0.6 ｜ 60~70→0.9 ｜ 71~80→1.0 ｜ 81~99→1.2 ｜ 100→1.3
+var MYSTERY_TABLE = {};            // { monthKey: { storeName: {score, coeff} } }
+var sessionMysteryOverrides = {};   // { "monthKey|idx": true } 本次会话内手动改过暗访芯片
+
+// ===== 月份冻结（数据锁定，防误改） =====
+// 触发：仅当用户单独指令才冻结；默认不冻结（初始化仅按 2026-08-06 要求冻结7月）。
+// 冻结后锁死该月「课时达成率」与「暗访分」两项数据值：手动拖滑块、点暗访芯片、重置、对该月重新导入 一律禁止。
+// 查看结果与切换月份始终允许。状态存于 localStorage key coachcalc:frozen，随备份一并导出。
+var FROZEN = {};   // { "2026-07": true }
+function loadFrozen(){
+  try{ var s=localStorage.getItem("coachcalc:frozen"); if(s){ FROZEN=JSON.parse(s); return; } }catch(e){}
+  FROZEN = { "2026-07": true };            // 首次运行：按用户要求冻结7月
+  persistFrozen();
+}
+function persistFrozen(){ try{ localStorage.setItem("coachcalc:frozen", JSON.stringify(FROZEN)); }catch(e){} }
+function isFrozen(m){ return !!FROZEN[m]; }
+function setFrozen(m,v){ if(v) FROZEN[m]=true; else delete FROZEN[m]; persistFrozen(); }
+function applyFrozenUI(){
+  var f = isFrozen(currentMonth);
+  var hs=document.getElementById("hourSlider"), hn=document.getElementById("hourNumber");
+  if(hs) hs.disabled = f; if(hn) hn.disabled = f;
+  document.querySelectorAll(".mystery-chip").forEach(function(b){ b.style.pointerEvents = f?"none":"auto"; b.style.opacity = f?0.55:1; });
+  var fb=document.getElementById("freezeBadge"); if(fb) fb.style.display = f?"inline-block":"none";
+  var fbtn=document.getElementById("freezeBtn"); if(fbtn) fbtn.innerText = f?"🔓 解冻本月":"🔒 冻结本月";
+}
+var MYSTERY_SEED = {
+  "2026-07": {
+    "无锡海岸城店":      {score:92, coeff:1.2},
+    "南通金鹰购物广场店":{score:91, coeff:1.2},
+    "长沙万象城店":      {score:83, coeff:1.2},
+    "常州江南环球港店":  {score:84, coeff:1.2},
+    "长沙国金街店":      {score:78, coeff:1.0},
+    "长沙河西王府井店":  {score:79, coeff:1.0},
+    "常州九洲新世界店":  {score:80, coeff:1.0},
+    "武汉凯德西城店":    {score:71, coeff:1.0},
+    "武汉梦时代店":      {score:60, coeff:0.9},
+    "武汉万科未来店":    {score:68, coeff:0.9},
+    "武汉亚贸店":        {score:68, coeff:0.9},
+    "长沙北辰荟店":      {score:67, coeff:0.9},
+    "海口吾悦店":        {score:64, coeff:0.9},
+    "三亚大悦城店":      {score:44, coeff:0.6},
+    "泉州中骏店":        {score:53, coeff:0.6},
+    "海口友谊店":        {score:46, coeff:0.6},  // 用户确认=海口友谊阳光城店
+    "武汉世纪都会店":    {score:51, coeff:0.6},  // PDF名:武汉凯德1818店
+    "武汉天地壹方店":    {score:76, coeff:1.0},  // PDF名:武汉新天地南馆店
+    "厦门国贸店":        {score:76, coeff:1.0},  // PDF名:厦门集美银泰百货店
+    "长沙梅溪湖金茂店":  {score:78, coeff:1.0}   // PDF名:长沙方兴金茂店
+  }
+};
+function syncMysteryFromSeed(){
+  Object.keys(MYSTERY_SEED).forEach(function(m){
+    MYSTERY_TABLE[m] = MYSTERY_TABLE[m] || {};
+    var sm = MYSTERY_SEED[m];
+    Object.keys(sm).forEach(function(nm){
+      MYSTERY_TABLE[m][nm] = { score: sm[nm].score, coeff: sm[nm].coeff };
+    });
+  });
+}
+function getSyncedMystery(m, idx){
+  var s = MONTH_CONFIGS[m].stores[idx];
+  return (MYSTERY_TABLE[m] && MYSTERY_TABLE[m][s.name]) ? MYSTERY_TABLE[m][s.name] : null;
+}
+function applySyncedMysteryIfAny(){
+  var key = currentMonth + "|" + currentStoreIdx;
+  var synced = getSyncedMystery(currentMonth, currentStoreIdx);
+  if(synced != null && !sessionMysteryOverrides[key]){
+    mysteryCoeff = synced.coeff;
+    document.querySelectorAll(".mystery-chip").forEach(function(b){
+      b.classList.toggle("selected", parseFloat(b.getAttribute("data-coeff")) === mysteryCoeff);
+    });
+  } else if(synced == null && MYSTERY_SEED[currentMonth] && !sessionMysteryOverrides[key]){
+    // 本月有暗访数据但该店未收录 → 回到中性默认，避免沿用上一家系数造成误导
+    mysteryCoeff = 1.3;
+    document.querySelectorAll(".mystery-chip").forEach(function(b){
+      b.classList.toggle("selected", parseFloat(b.getAttribute("data-coeff")) === mysteryCoeff);
+    });
+  }
+  refreshMysteryBadge();
+}
+function refreshMysteryBadge(){
+  var el = document.getElementById("mysterySyncedBadge"); if(!el) return;
+  var key = currentMonth + "|" + currentStoreIdx;
+  var synced = getSyncedMystery(currentMonth, currentStoreIdx);
+  if(synced == null){
+    if(MYSTERY_SEED[currentMonth]){ el.style.display="block"; el.innerHTML="🎭 本月该店暂无暗访数据，请手动选择系数" + (isFrozen(currentMonth)?" · 🔒已冻结":""); }
+    else { el.style.display="none"; }
+    return;
+  }
+  el.style.display = "block";
+  if(sessionMysteryOverrides[key])
+    el.innerHTML = "🎭 暗访基准 <b>" + synced.score + "分</b>（系数" + synced.coeff + "）· <span class='ovr'>已手动调整（点回对应芯片可复原）</span>";
+  else
+    el.innerHTML = "🎭 已同步暗访分：" + synced.score + "分（系数 <b>" + synced.coeff + "</b>）";
+  if(isFrozen(currentMonth)) el.innerHTML += " · 🔒已冻结";
+}
+// 合并解析结果到某月份（配置 + ACHIEVEMENT_TABLE）
+function applyAchievement(m, parsed){
+    ACHIEVEMENT_TABLE[m] = ACHIEVEMENT_TABLE[m] || {};
+    var matched = 0, unmatched = [];
+    MONTH_CONFIGS[m].stores.forEach(function(s){
+        var norm = normName(s.name);
+        if(parsed[norm]){
+            var e = parsed[norm];
+            s.coach = e.coach;
+            s.flowGroup = e.tier ? (tierToFlowGroup(e.tier) || s.flowGroup) : s.flowGroup;
+            s.targetHour = (e.target != null) ? e.target : s.targetHour;
+            s.achievedRate = e.rate; s.daysWorked = e.daysWorked; s.effHours = e.effHours;
+            ACHIEVEMENT_TABLE[m][s.name] = {rate:e.rate, target:s.targetHour, daysWorked:e.daysWorked, coach:e.coach, effHours:e.effHours, tier:s.flowGroup};
+            matched++;
+        }
+    });
+    Object.keys(parsed).forEach(function(n){
+        if(!MONTH_CONFIGS[m].stores.some(function(s){ return normName(s.name) === n; })) unmatched.push(parsed[n].rawName);
+    });
+    persistAchievement();
+    return {matched:matched, total:MONTH_CONFIGS[m].stores.length, unmatched:unmatched};
+}
+
+// ---------- 解析：xlsx（SheetJS） / csv ----------
+function parseSheetRows(rowsArr){
+    var hdrIdx = -1, col = {};
+    for(var i=0;i<rowsArr.length;i++){
+        var row = rowsArr[i] || [];
+        var hasName=false, hasRate=false;
+        for(var j=0;j<row.length;j++){
+            var c = row[j]; if(c==null) continue;
+            var s = String(c).replace(/[\s\n\r]/g,"");
+            if(s.indexOf("门店名称")>=0) hasName=true;
+            if(s.indexOf("课时达成率")>=0) hasRate=true;
+        }
+        if(hasName && hasRate){
+            hdrIdx = i;
+            for(var j=0;j<row.length;j++){
+                var s2 = String(row[j]==null?"":row[j]).replace(/[\s\n\r]/g,"");
+                if(s2.indexOf("门店名称")>=0) col.name=j;
+                else if(s2.indexOf("课时达成率")>=0) col.rate=j;
+                else if(s2.indexOf("时长目标")>=0) col.target=j;
+                else if(s2.indexOf("Coach")>=0 || s2.indexOf("教练")>=0) col.coach=j;
+                else if(s2.indexOf("上课天数")>=0 || s2.indexOf("天数")>=0) col.days=j;
+                else if(s2.indexOf("有效服务时长")>=0) col.eff=j;
+                else if(s2.indexOf("客流分布")>=0) col.tier=j;
+            }
+            break;
+        }
+    }
+    if(hdrIdx < 0) return {error:"未找到含『门店名称 + 课时达成率』表头的表格，请检查表格格式"};
+    var data = {}, tier = null;
+    for(var i=hdrIdx+1;i<rowsArr.length;i++){
+        var row = rowsArr[i] || [];
+        var name = (col.name!=null) ? row[col.name] : null;
+        var rate = (col.rate!=null) ? row[col.rate] : null;
+        if(name==null || rate==null) continue;
+        name = String(name).replace(/[\s\n\r]/g,"");
+        if(name === "合计") continue;
+        if(col.tier!=null && row[col.tier]!=null) tier = String(row[col.tier]).replace(/[\s\n\r]/g,"");
+        var coach = (col.coach!=null && row[col.coach]!=null) ? String(row[col.coach]).replace(/[\s\n\r]/g,"") : "";
+        var target = (col.target!=null) ? parseFloat(row[col.target]) : NaN;
+        var days = (col.days!=null) ? parseInt(row[col.days]) : NaN;
+        var eff = (col.eff!=null) ? parseFloat(row[col.eff]) : NaN;
+        var r = parseFloat(rate);
+        if(isNaN(r)) continue;
+        var norm = normName(name);
+        data[norm] = {
+            rawName:name, coach:coach,
+            target: isNaN(target)?null:target,
+            rate: Math.round(r*100*100)/100,
+            daysWorked: isNaN(days)?null:days,
+            effHours: isNaN(eff)?null:eff,
+            tier: tier
+        };
+    }
+    return {data:data};
+}
+function parseAchievementWorkbook(wb){
+    var sheets = wb.SheetNames, chosen=null, chosenName=null;
+    for(var k=0;k<sheets.length;k++){
+        if(/OnSite[-_](月|周)/.test(sheets[k])){ chosen=wb.Sheets[sheets[k]]; chosenName=sheets[k]; break; }
+    }
+    if(!chosen){
+        for(var k=0;k<sheets.length;k++){
+            var rows = XLSX.utils.sheet_to_json(wb.Sheets[sheets[k]], {header:1, defval:null, blankrows:false});
+            var ok = rows.some(function(r){ return (r||[]).some(function(c){ return c!=null && String(c).indexOf("课时达成率")>=0; }); });
+            if(ok){ chosen=wb.Sheets[sheets[k]]; chosenName=sheets[k]; break; }
+        }
+    }
+    if(!chosen) return {error:"未找到含『课时达成率』的工作表"};
+    var rows = XLSX.utils.sheet_to_json(chosen, {header:1, defval:null, blankrows:false});
+    var res = parseSheetRows(rows); res.sheetUsed = chosenName; return res;
+}
+function parseCSVText(text){
+    var lines = text.split(/\r?\n/);
+    var rows = lines.map(function(l){ return l.split(/,|;|\t/).map(function(c){ return c.replace(/^"|"$/g,"").trim(); }); });
+    var res = parseSheetRows(rows); res.sheetUsed = "CSV"; return res;
+}
+function handleAchFile(file){
+    var reader = new FileReader();
+    reader.onload = function(e){
+        var res;
+        if(/\.csv$/i.test(file.name)){
+            var txt = (typeof e.target.result === "string") ? e.target.result : new TextDecoder("utf-8").decode(e.target.result);
+            res = parseCSVText(txt);
+        } else {
+            try { var wb = XLSX.read(e.target.result, {type:"array"}); res = parseAchievementWorkbook(wb); }
+            catch(err){ res = {error:"解析失败：" + err.message}; }
+        }
+        if(res.error){ alert(res.error); return; }
+        if(Object.keys(res.data).length === 0){ alert("未能从表格中解析出任何门店达成数据"); return; }
+        showImportModal(res);
+    };
+    if(/\.csv$/i.test(file.name)) reader.readAsText(file); else reader.readAsArrayBuffer(file);
+}
+
+// ---------- 导入弹窗 ----------
+var pendingImport = null;
+function showImportModal(res){
+    pendingImport = res;
+    document.getElementById("importFileInfo").innerText = "已解析工作表：「" + (res.sheetUsed||"") + "」 · 共识别 " + Object.keys(res.data).length + " 家门店的达成数据";
+    var sel = document.getElementById("importMonthSel"); sel.innerHTML = "";
+    Object.keys(MONTH_CONFIGS).sort().forEach(function(k){
+        var o = document.createElement("option"); o.value=k; o.textContent=MONTH_CONFIGS[k].label; sel.appendChild(o);
+    });
+    sel.value = currentMonth;
+    sel.onchange = function(){ renderImportPreview(sel.value); };
+    renderImportPreview(currentMonth);
+    document.getElementById("importModal").style.display = "flex";
+}
+function renderImportPreview(m){
+    var data = pendingImport.data, cfg = MONTH_CONFIGS[m].stores;
+    var html = "<table class='imp-tbl'><thead><tr><th>门店</th><th>Coach</th><th>时长目标</th><th>课时达成率</th><th>匹配</th></tr></thead><tbody>";
+    cfg.forEach(function(s){
+        var norm = normName(s.name), e = data[norm];
+        if(e){
+            html += "<tr class='imp-ok'><td>"+s.name+"</td><td>"+e.coach+"</td><td>"+(e.target!=null?e.target:s.targetHour)+"h</td><td><b>"+e.rate+"%</b></td><td>✅ 匹配</td></tr>";
+        } else {
+            html += "<tr class='imp-no'><td>"+s.name+"</td><td>"+(s.coach||"-")+"</td><td>"+s.targetHour+"h</td><td>-</td><td>➖ 表中无</td></tr>";
+        }
+    });
+    Object.keys(data).forEach(function(n){
+        if(!cfg.some(function(s){ return normName(s.name)===n; })){
+            var e = data[n];
+            html += "<tr class='imp-extra'><td>"+e.rawName+"</td><td>"+e.coach+"</td><td>"+(e.target!=null?e.target:"-")+"h</td><td><b>"+e.rate+"%</b></td><td>⚠️ 计算器无此店</td></tr>";
+        }
+    });
+    html += "</tbody></table>";
+    document.getElementById("importPreview").innerHTML = html;
+}
+function closeImportModal(){ document.getElementById("importModal").style.display = "none"; pendingImport = null; }
+function doImport(){
+    var m = document.getElementById("importMonthSel").value;
+    if(isFrozen(m)){ toast("🔒 " + MONTH_CONFIGS[m].label + " 已冻结，无法重新导入覆盖（如需更新请先解冻）"); return; }
+    var r = applyAchievement(m, pendingImport.data);
+    if(m === currentMonth) applySyncedRateIfAny();
+    populateStoreSelect(); renderStoreGrid(); updateStats();
+    syncMatcherToStore(); updateGapPlanner(); fullRefresh();
+    closeImportModal();
+    var extra = r.unmatched.length ? (" · 未匹配：" + r.unmatched.join("、")) : "";
+    toast("✅ 已导入 " + r.matched + " / " + r.total + " 家门店到 " + MONTH_CONFIGS[m].label + extra);
+}
+function toast(msg){
+    var t = document.getElementById("toast"); if(!t) return;
+    t.innerText = msg; t.style.display = "block"; t.classList.add("show");
+    setTimeout(function(){ t.classList.remove("show"); setTimeout(function(){ t.style.display="none"; }, 300); }, 3600);
+}
+
+// ================================================================
+//  ★ 数据备份闭环（铁律2：导出 / 导入恢复 / 清空 二次确认）
+// ================================================================
+function pad2(n){ return (n<10?"0":"")+n; }
+function coachcalcKeys(){
+    var ks=[];
+    for(var i=0;i<localStorage.length;i++){ var k=localStorage.key(i); if(k && k.indexOf("coachcalc:")===0) ks.push(k); }
+    return ks;
+}
+function exportBackup(){
+    var store={};
+    coachcalcKeys().forEach(function(k){ store[k]=localStorage.getItem(k); });
+    var dump={ _meta:{ tool:"Coach激励计算器", exportedAt:new Date().toISOString() }, store:store };
+    var blob=new Blob([JSON.stringify(dump,null,2)],{type:"application/json"});
+    var a=document.createElement("a");
+    var d=new Date();
+    a.href=URL.createObjectURL(blob);
+    a.download="coachcalc-backup-"+d.getFullYear()+pad2(d.getMonth()+1)+pad2(d.getDate())+".json";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1500);
+    toast("💾 已导出备份（"+Object.keys(store).length+" 项本地数据）");
+}
+function importBackupFile(file){
+    var reader=new FileReader();
+    reader.onload=function(e){
+        try{
+            var obj=JSON.parse(e.target.result);
+            if(!obj || !obj.store || typeof obj.store!=="object") throw new Error("文件格式不正确（缺少 store 字段）");
+            var ks=Object.keys(obj.store);
+            if(ks.length===0) throw new Error("备份文件内没有任何数据");
+            var n=0;
+            ks.forEach(function(k){ if(k.indexOf("coachcalc:")===0){ localStorage.setItem(k, obj.store[k]); n++; } });
+            loadPersistedAchievement();
+            Object.keys(MONTH_CONFIGS).forEach(applyAchievementToConfig);
+            syncAchievementFromConfig();
+            setMonth(currentMonth);
+            toast("📥 已恢复备份（"+n+" 项数据）");
+        }catch(err){ alert("导入失败：" + err.message); }
+    };
+    reader.readAsText(file);
+}
+function clearAllData(){
+    coachcalcKeys().forEach(function(k){ localStorage.removeItem(k); });
+    ACHIEVEMENT_TABLE={};
+    setMonth(currentMonth);
+    toast("🗑️ 已清空全部本地数据");
+}
+function openConfirmModal(){ document.getElementById("confirmModal").style.display="flex"; }
+function closeConfirmModal(){ document.getElementById("confirmModal").style.display="none"; }
+
+// 个税明细（与 calcTax 同口径）：返回 应纳税所得额 / 适用税率 / 速算扣除数 / 税额
+function calcTaxDetail(gross){
+    var t = Math.max(0, gross - INSURANCE - 5000);
+    var rate, ded;
+    if(t <= 3000){ rate = 0.03; ded = 0; }
+    else if(t <= 12000){ rate = 0.10; ded = 210; }
+    else if(t <= 25000){ rate = 0.20; ded = 1410; }
+    else { rate = 0.25; ded = 2660; }
+    var tax = Math.max(0, t * rate - ded);
+    return { taxable: t, rate: rate, ded: ded, tax: tax };
+}
+
+// ================================================================
+//  ★ 一键生成 PDF 工资条（打印对话框中选择「另存为 PDF」即可下载）
+// ================================================================
+function fmtMoney(n){
+    var neg = n < 0;
+    var s = Math.abs(n).toLocaleString('zh-CN', {minimumFractionDigits:2, maximumFractionDigits:2});
+    return (neg ? '-' : '') + s;
+}
+function psRow(lbl, val, note){
+    return '<div class="ps-row"><span class="ps-lbl">'+lbl+(note?' <small>'+note+'</small>':'')+'</span><span class="ps-val">'+fmtMoney(val)+'</span></div>';
+}
+function buildPayslip(){
+    var s = stores[currentStoreIdx];
+    if(!s) return;
+    var perfAfter  = getBasePerformance();            // 评分折算后绩效（覆盖=3500×ov；分项=分项合计）
+    var mysteryAdj = getMysteryAdjustment(perfAfter); // 暗访奖惩（基于折算后绩效）
+    var finalPerf  = getFinalPerformance();           // 最终绩效 = 折算后 + 奖惩
+    var gross = BASE_SALARY + finalPerf;              // 税前应发
+    var ins   = INSURANCE;
+    var tax   = calcTax(gross);
+    var net   = gross - ins - tax;
+    var ov = getPerfScoreOverride();
+    var ym = currentMonth.split('-');
+    var monthLabel = ym[0] + '年' + parseInt(ym[1],10) + '月';
+    var mysteryTag = (mysteryCoeff >= 1) ? '奖励' : '扣减';
+    // 覆盖模式：绩效基础盘子 = 3500，评分系数 ov；分项模式：基础盘子 = 分项合计
+    var baseMoney  = (ov !== null) ? BASE_SALARY : perfAfter;
+    var scoreFormula = (ov !== null)
+      ? ('3500 × '+ov.toFixed(3)+' = '+fmtMoney(perfAfter))
+      : ('分项合计 = '+fmtMoney(perfAfter));
+    var scoreDelta = perfAfter - baseMoney;          // 对比基础盘子的增减额（评分影响）
+
+    var scoreOp   = (scoreDelta < 0) ? '<span class="op-deduct">−</span>' : (scoreDelta > 0 ? '<span class="op-add">+</span>' : '<span style="color:#8e8e93;font-weight:700;">±</span>');
+    var mysteryOp = (mysteryAdj < 0) ? '<span class="op-deduct">−</span>' : (mysteryAdj > 0 ? '<span class="op-add">+</span>' : '<span style="color:#8e8e93;font-weight:700;">±</span>');
+
+    // 考核① 扣分明细：仅覆盖模式（Excel 导入）时展开 9 个加权子项；分项模式不涉及
+    var perfDeductRows = '';
+    var perfFormulaNote = '';
+    if(ov !== null){
+      var items = getPerfScoreDetail() || [];
+      var deducted = [];
+      for(var i=0;i<items.length;i++){
+        var it = items[i];
+        if(it.w > it.s){
+          var deductionPct = (it.w - it.s).toFixed(2);
+          var deductionAmt = (it.w - it.s) * BASE_SALARY;
+          deducted.push({name: it.n, w: it.w, s: it.s, dpct: deductionPct, damt: deductionAmt});
+        }
+      }
+      if(deducted.length > 0){
+        perfDeductRows += '<div class="ps-deduct-head">└ 扣分明细（按 Excel 9 项加权子项）</div>';
+        for(var j=0;j<deducted.length;j++){
+          var d = deducted[j];
+          perfDeductRows += '<div class="ps-deduct-item">'
+            + '<span class="ps-deduct-no">'+(j+1)+'</span>'
+            + '<span class="ps-deduct-name">'+d.name+'</span>'
+            + '<span class="ps-deduct-amt">− '+fmtMoney(d.damt)+'元</span>'
+            + '</div>';
+        }
+        var totalDeduct = deducted.reduce(function(s2,x){return s2+x.damt;},0);
+        perfDeductRows += '<div class="ps-deduct-total"><span>扣分明细 '+deducted.length+' 项合计</span><span>− '+fmtMoney(totalDeduct)+'元</span></div>';
+      } else {
+        perfDeductRows += '<div class="ps-row sub2"><span class="ps-lbl">（9 项子项全部满分，'+(ov!==null?ov.toFixed(3):'分项')+'，'+scoreFormula+'）</span><span class="ps-val"></span></div>';
+      }
+    }
+
+    var payRows = psRow('基本工资', BASE_SALARY, '')
+                + psRow('绩效工资', finalPerf, '')
+                + '<div class="ps-row sub"><span class="ps-lbl">绩效全额（考核前）</span><span class="ps-val">'+fmtMoney(baseMoney)+'</span></div>'
+                + '<div class="ps-row sub"><span class="ps-lbl">考核① 月度绩效评分：'+scoreOp+' '+fmtMoney(Math.abs(scoreDelta))+'元</span><span class="ps-val">'+fmtMoney(scoreDelta)+'</span></div>'
+                + perfDeductRows + (ov!==null ? perfFormulaNote : '<div class="ps-row sub2"><span class="ps-lbl">（评分系数 '+(ov!==null?ov.toFixed(3):'分项')+'，'+scoreFormula+'）</span><span class="ps-val"></span></div>')
+                + '<div class="ps-row sub"><span class="ps-lbl">考核② 神秘顾客暗访：'+mysteryOp+' '+fmtMoney(Math.abs(mysteryAdj))+'元</span><span class="ps-val">'+fmtMoney(mysteryAdj)+'</span></div>'
+                + '<div class="ps-row sub2"><span class="ps-lbl">（暗访系数 '+mysteryCoeff.toFixed(2)+'，'+fmtMoney(perfAfter)+' × 30% × ('+mysteryCoeff.toFixed(2)+'−1)）</span><span class="ps-val"></span></div>'
+                + '<div class="ps-row sub"><span class="ps-lbl">绩效工资 = 全额 '+fmtMoney(baseMoney)+(scoreDelta<0?' − '+fmtMoney(Math.abs(scoreDelta)):(scoreDelta>0?' + '+fmtMoney(Math.abs(scoreDelta)):''))+(mysteryAdj<0?' − '+fmtMoney(Math.abs(mysteryAdj)):(mysteryAdj>0?' + '+fmtMoney(Math.abs(mysteryAdj)):''))+'</span><span class="ps-val">'+fmtMoney(finalPerf)+'</span></div>';
+    var payHtml = '<div class="ps-section"><div class="ps-sec-title">应发项目</div>'
+               + payRows
+               + '<div class="ps-row total"><span class="ps-lbl">应发合计</span><span class="ps-val">'+fmtMoney(gross)+'</span></div></div>';
+
+    var td = calcTaxDetail(gross);
+    var dedHtml = '<div class="ps-section"><div class="ps-sec-title">代扣项目（从工资扣除）</div>'
+               + '<div class="ps-row sub"><span class="ps-lbl">① 五险一金（个人缴纳）：<span class="op-deduct">−</span> '+fmtMoney(ins)+'元</span><span class="ps-val">'+fmtMoney(-ins)+'</span></div>'
+               + '<div class="ps-row sub2"><span class="ps-lbl">（含 养老·医疗·失业·公积金，合并为一项）</span><span class="ps-val"></span></div>'
+               + '<div class="ps-row sub"><span class="ps-lbl">② 个人所得税：<span class="op-deduct">−</span> '+fmtMoney(tax)+'元</span><span class="ps-val">'+fmtMoney(-tax)+'</span></div>'
+               + '<div class="ps-row sub2"><span class="ps-lbl">（应纳税所得额 '+fmtMoney(td.taxable)+' · 税率 '+(td.rate*100).toFixed(0)+'% · 速算扣除 '+fmtMoney(td.ded)+'）</span><span class="ps-val"></span></div>'
+               + '<div class="ps-row total"><span class="ps-lbl">扣款合计：<span class="op-deduct">−</span> '+fmtMoney(ins+tax)+'元</span><span class="ps-val">'+fmtMoney(-(ins+tax))+'</span></div></div>';
+
+    var d = new Date();
+    var genTime = d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate())+' '+pad2(d.getHours())+':'+pad2(d.getMinutes());
+
+    var html = ''
+      + '<div class="ps-wrap">'
+      +   '<div class="ps-head"><h2>工资条 · Payslip</h2><div class="ps-sub">Coach 激励计算器 · '+monthLabel+'</div></div>'
+      +   '<div class="ps-meta">'
+      +     '<div><span>核算月份</span><b>'+monthLabel+'</b></div>'
+      +     '<div><span>门店</span><b>'+s.name+'</b></div>'
+      +     '<div><span>Coach</span><b>'+s.coach+'</b></div>'
+      +     '<div><span>客流档</span><b>'+(s.flowGroup||'-')+'</b></div>'
+      +   '</div>'
+      +   payHtml + dedHtml
+      +   '<div class="ps-net"><span class="ps-net-lbl">实发工资（到手）</span><span class="ps-net-val">¥ '+fmtMoney(net)+'</span></div>'
+      +   '<div class="ps-foot">生成时间：'+genTime+' ｜ 本工资条由 Coach 激励计算器自动生成，金额以实际发放为准。</div>'
+      + '</div>';
+    document.getElementById('payslip').innerHTML = html;
+}
+function exportPayslipPDF(){
+    var s = stores[currentStoreIdx];
+    if(!s){ toast('请先选择一家门店'); return; }
+    buildPayslip();
+    window.print();
+}
+
+
+if (window.self === window.top) {
+  // 非嵌套（直接在浏览器打开）：不渲染薪资内容，由 CSS 遮罩提示
+  var _dm = document.getElementById('directAccessMask');
+  if(_dm) _dm.style.display = 'flex';
+} else {
+  initUI();
+  renderLookupTable();
+  renderAchieveLookup();
+  initLookupTabs();
+}
+
+// ---------- 📚 底部速查表标签页切换 ----------
+function initLookupTabs(){
+    var btns = document.querySelectorAll(".tab-btn");
+    btns.forEach(function(b){
+        b.addEventListener("click", function(){
+            btns.forEach(function(x){ x.classList.remove("active"); });
+            b.classList.add("active");
+            var tab = b.getAttribute("data-tab");
+            document.querySelectorAll(".tab-panel").forEach(function(p){
+                p.classList.toggle("active", p.id === "tab-" + tab);
+            });
+        });
+    });
+}
+
+// ---------- 📊 课时达成速查表渲染 ----------
+function renderAchieveLookup(){
+    var tbl = document.getElementById("achieveLookupTable");
+    if(!tbl) return;
+    var rates = [0, 70, 80, 85, 90, 95, 100, 105, 110, 115, 120, 125, 130];
+    var otherFull = COURSE_AMT + DEDUP_AMT + PREP_AMT + SEED_BASE + TALK_BASE + DEMO_BASE + AEP_AMT;
+    var maxCoach = COACH_BASE * 1.30; // 130% 封顶值，用作柱状条基准
+
+    // 表头
+    var html = '<thead><tr>'
+        + '<th>达成率</th><th>系数</th><th>Coach项目</th><th>参考到手*</th>'
+        + '</tr></thead><tbody>';
+
+    rates.forEach(function(r){
+        var coeff = getHourCoefficient(r);
+        var coach = COACH_BASE * coeff;
+        // 参考到手：全勾选 + 暗访满分1.3
+        var base = coach + otherFull + COLLAB_AMT;
+        var fp = base + base * 0.30 * (1.3 - 1);
+        var gross = BASE_SALARY + fp;
+        var t = Math.max(0, gross - INSURANCE - 5000);
+        if(t <= 3000) t *= 0.03; else if(t <= 12000) t = t*0.10 - 210;
+        else if(t <= 25000) t = t*0.20 - 1410; else t = t*0.25 - 2660;
+        var net = gross - INSURANCE - t;
+
+        // 区间判定
+        var zone;
+        if(r < 80) zone = "al-zone-0";
+        else if(r < 100) zone = "al-zone-80";
+        else if(r === 100) zone = "al-zone-100";
+        else if(r < 130) zone = "al-zone-up";
+        else zone = "al-zone-cap";
+
+        // 柱状条宽度（相对封顶值）
+        var barPct = Math.round((coach / maxCoach) * 100);
+        var barColor = r < 80 ? "#ff3b30" : (r < 100 ? "#ff9f0a" : (r < 130 ? "#007aff" : "#34c759"));
+
+        // 系数显示
+        var coeffStr = coeff === 0 ? "0" : coeff.toFixed(2);
+
+        html += '<tr class="'+zone+'">'
+            + '<td class="al-rate">'+r+'%</td>'
+            + '<td>'+coeffStr+'</td>'
+            + '<td class="al-coach">'+coach.toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:0})
+            + '<div class="al-bar"><div class="al-bar-fill" style="width:'+barPct+'%;background:'+barColor+';"></div></div></td>'
+            + '<td class="al-net">'+net.toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:0})+'</td>'
+            + '</tr>';
+    });
+
+    html += '</tbody>';
+    tbl.innerHTML = html;
+}
+
+// ================================================================
+</script>
+
+    <!-- ========== 🧾 工资条（仅打印/导出 PDF 时可见） ========== -->
+    <div id="payslip"></div>
+
+</body>
+</html>

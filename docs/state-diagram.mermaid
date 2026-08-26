@@ -1,0 +1,25 @@
+stateDiagram-v2
+    [*] --> Empty: 进入月考模式（无草稿）
+
+    Empty --> Listing: 点击「解析并核对题目」/ OCR 后解析
+    Empty --> Listing: renderExam 自动还原（有草稿 && sig 失配或 stage=list）
+    Empty --> Cards: renderExam 自动还原（有草稿 && sig 匹配 && stage=cards）
+
+    Listing --> Listing: 单条移除（examRemoveQuestion）
+    Listing --> Listing: 恢复已移除（examRestoreRemoved）
+    Listing --> Empty: 移除到 0 题 / 清空清单
+    Listing --> Listing: 重新解析（examDoParse，清空 removedKeys）
+    Listing --> Cards: 点击「确认并展开题目」（saveExamStage cards）
+
+    Cards --> Listing: 点击「← 返回清单核对」（saveExamStage list）
+    Cards --> Listing: 修改粘贴框后重新解析（sig 变更）
+    Cards --> Cards: 标记完成 / 朗读 / 复制 / 看图
+
+    note right of Listing
+      DOM: #examListWrap 显示
+           #examCards 隐藏
+    end note
+    note right of Cards
+      DOM: #examCards 显示
+           #examListWrap 隐藏
+    end note

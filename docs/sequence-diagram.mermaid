@@ -1,0 +1,68 @@
+sequenceDiagram
+    autonumber
+    actor U as 用户
+    participant IM as renderExamImport<br/>(#examPaste)
+    participant DP as examDoParse
+    participant PL as examParseLines
+    participant MA as examMatchAll
+    participant DD as examDedupeMatched
+    participant RI as examReindex
+    participant ST as examSetStage
+    participant RL as renderExamList
+    participant RC as renderExamCards
+    participant LS as localStorage
+
+    U->>IM: 粘贴清单 / OCR 追加文本
+    IM->>LS: saveExamPaste(raw)
+    U->>IM: 点击「解析并核对题目」
+    IM->>DP: examDoParse(false)
+
+    DP->>LS: saveExamPaste(raw)
+    DP->>LS: loadExamRemoved() → examRemovedKeys
+    DP->>PL: examParseLines(raw)
+    PL->>PL: 逐行 examSeqOf / examStripSeq / examDetectHint
+    PL->>PL: 按 examNorm(clean) 去重（dupCount++ / dupRaws.push）
+    PL-->>DP: lines[]（无重复文本）
+
+    DP->>MA: examMatchAll(lines)
+    MA->>MA: 构建 coach/demo 候选池（一次）
+    loop 每题
+        MA->>MA: examMatchOne（强标签限定池 / Dice≥0.60 / fold 兜底）
+    end
+    MA->>DD: examDedupeMatched(result)
+    DD->>DD: 按 examQKey 合并，位置取先者、score 取高者
+    DD->>DD: 过滤 examRemovedKeys
+    DD->>RI: examReindex(list)
+    RI-->>DP: examQuestions（order/seq 连续）
+
+    DP->>ST: examSetStage('list')
+    ST->>LS: saveExamStage({sig, stage:'list'})
+    ST->>RL: renderExamList()
+    RL-->>U: 紧凑清单（序号/类型/标题/模糊/合并/移除）
+    ST->>ST: renderExamSummary() + renderExamNav()
+    DP-->>U: toast「已解析 N 题（已合并 M 条重复），请核对后展开」
+
+    opt 核对阶段：剔除噪声
+        U->>RL: 点击某行「✕」
+        RL->>ST: examRemoveQuestion(order)
+        ST->>ST: examRemovedKeys.add(examQKey(q))
+        ST->>LS: saveExamRemoved({sig, keys})
+        ST->>RI: 从 examQuestions 剔除 → examReindex
+        ST->>RL: renderExamList()（重绘，序号重排）
+        ST->>ST: renderExamSummary() + renderExamNav()
+        ST-->>U: toast「已移除，剩 N 题」
+    end
+
+    U->>RL: 点击「确认并展开题目（N）」
+    RL->>ST: examSetStage('cards')
+    ST->>LS: saveExamStage({sig, stage:'cards'})
+    ST->>RC: renderExamCards()
+    RC->>LS: loadExamDone() → 回填已完成态
+    RC->>RC: bindExamCardEvents()
+    RC-->>U: 完整卡片（可朗读/复制/标记完成）
+
+    opt 回到核对
+        U->>RC: 点击「← 返回清单核对」
+        RC->>ST: examSetStage('list')
+        ST->>RL: renderExamList()
+    end

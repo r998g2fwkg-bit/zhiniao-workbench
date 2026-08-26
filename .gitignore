@@ -1,0 +1,56 @@
+# ============================================================
+# 知鸟答案工作台 · Git 忽略规则
+# 原则：排除密钥/凭证、依赖、构建产物、本地缓存、临时/调试文件。
+# 不删除任何业务文件，仅从版本控制中排除。
+# ============================================================
+
+# ---------- 依赖 / 构建产物 ----------
+node_modules/
+dist/
+dist.zip
+*.zip
+*.tar.gz
+
+# ---------- 本地缓存 / 日志 / 系统文件 ----------
+.tcb/
+.wrangler/
+.DS_Store
+*.log
+tcb.log
+__pycache__/
+*.pyc
+
+# ---------- 密钥 / 凭证 / 敏感信息 ----------
+.env
+.env.*
+*.local
+# 含已撤销明文 GitHub Token 的部署脚本（不得入库）
+deploy_to_cloudflare.sh
+push_github.sh
+# COS 部署脚本（从外部 ~/.cos.conf 读取密钥）
+cos_deploy.py
+# 废弃后端原型（含硬编码管理员凭证）
+zhiniao-tcb/
+zhiniao-backend/
+# WorkBuddy 本地状态（含凭证引用/自动化配置）
+.workbuddy/
+
+# ---------- 嵌套 Git 仓库（旧 Cloudflare 备份克隆）----------
+github-pages/
+
+# ---------- 构建快照 / 备份副本 ----------
+知鸟答案工作台.html
+知鸟答案工作台.html.bak-*
+知鸟工作台-离线备份-*.tar.gz
+*.bak
+*.bak2
+
+# ---------- 调试 / 临时脚本（下划线前缀）----------
+_*.py
+_*.js
+
+# ---------- 生成产物 / 输出 / 截图 ----------
+outputs/
+screenshots/
+share/
+tab-icons-preview.html

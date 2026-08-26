@@ -1,0 +1,3625 @@
+{
+ "wangfujing": {
+  "name": "长沙河西王府井店",
+  "coach": "周佳乐",
+  "pin": "8801",
+  "official": true,
+  "target": 3.5,
+  "flow": "",
+  "restDays": 20,
+  "restHours": 4.1,
+  "days": [
+   {
+    "date": "2026-08-01",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privCourse",
+      "min": 73
+     },
+     {
+      "type": "privQA",
+      "min": 20
+     },
+     {
+      "type": "privQA",
+      "min": 28
+     },
+     {
+      "type": "privQA",
+      "min": 19
+     },
+     {
+      "type": "quickStart",
+      "min": 77
+     },
+     {
+      "type": "support",
+      "min": 57
+     },
+     {
+      "type": "support",
+      "min": 45
+     }
+    ]
+   },
+   {
+    "date": "2026-08-02",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privCourse",
+      "min": 60
+     },
+     {
+      "type": "privQA",
+      "min": 20
+     },
+     {
+      "type": "quickStart",
+      "min": 68
+     },
+     {
+      "type": "publicClass",
+      "min": 29
+     },
+     {
+      "type": "support",
+      "min": 51
+     },
+     {
+      "type": "support",
+      "min": 49
+     }
+    ]
+   },
+   {
+    "date": "2026-08-03",
+    "status": "休息",
+    "sessions": []
+   },
+   {
+    "date": "2026-08-04",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privQA",
+      "min": 15
+     },
+     {
+      "type": "privQA",
+      "min": 23
+     },
+     {
+      "type": "privQA",
+      "min": 15
+     },
+     {
+      "type": "quickStart",
+      "min": 45
+     },
+     {
+      "type": "quickStart",
+      "min": 62
+     },
+     {
+      "type": "quickStart",
+      "min": 45
+     },
+     {
+      "type": "support",
+      "min": 54
+     },
+     {
+      "type": "support",
+      "min": 34
+     }
+    ]
+   },
+   {
+    "date": "2026-08-05",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privCourse",
+      "min": 46
+     },
+     {
+      "type": "privQA",
+      "min": 19
+     },
+     {
+      "type": "privQA",
+      "min": 19
+     },
+     {
+      "type": "privQA",
+      "min": 20
+     },
+     {
+      "type": "quickStart",
+      "min": 45
+     },
+     {
+      "type": "quickStart",
+      "min": 49
+     },
+     {
+      "type": "support",
+      "min": 75
+     },
+     {
+      "type": "support",
+      "min": 15
+     }
+    ]
+   },
+   {
+    "date": "2026-08-06",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privCourse",
+      "min": 50
+     },
+     {
+      "type": "privQA",
+      "min": 17
+     },
+     {
+      "type": "privQA",
+      "min": 14
+     },
+     {
+      "type": "privQA",
+      "min": 28
+     },
+     {
+      "type": "quickStart",
+      "min": 45
+     },
+     {
+      "type": "quickStart",
+      "min": 38
+     },
+     {
+      "type": "support",
+      "min": 33
+     }
+    ]
+   },
+   {
+    "date": "2026-08-07",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privCourse",
+      "min": 53
+     },
+     {
+      "type": "privQA",
+      "min": 18
+     },
+     {
+      "type": "privQA",
+      "min": 15
+     },
+     {
+      "type": "privQA",
+      "min": 21
+     },
+     {
+      "type": "quickStart",
+      "min": 46
+     },
+     {
+      "type": "quickStart",
+      "min": 45
+     },
+     {
+      "type": "quickStart",
+      "min": 31
+     },
+     {
+      "type": "support",
+      "min": 45
+     },
+     {
+      "type": "support",
+      "min": 31
+     }
+    ]
+   },
+   {
+    "date": "2026-08-08",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privQA",
+      "min": 20
+     },
+     {
+      "type": "privQA",
+      "min": 23
+     },
+     {
+      "type": "privQA",
+      "min": 15
+     },
+     {
+      "type": "quickStart",
+      "min": 53
+     },
+     {
+      "type": "quickStart",
+      "min": 50
+     },
+     {
+      "type": "support",
+      "min": 43
+     },
+     {
+      "type": "support",
+      "min": 19
+     }
+    ]
+   },
+   {
+    "date": "2026-08-09",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privCourse",
+      "min": 57
+     },
+     {
+      "type": "quickStart",
+      "min": 58
+     },
+     {
+      "type": "quickStart",
+      "min": 45
+     },
+     {
+      "type": "publicClass",
+      "min": 30
+     },
+     {
+      "type": "support",
+      "min": 32
+     }
+    ]
+   },
+   {
+    "date": "2026-08-10",
+    "status": "休息",
+    "sessions": []
+   },
+   {
+    "date": "2026-08-11",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privCourse",
+      "min": 50
+     },
+     {
+      "type": "privQA",
+      "min": 14
+     },
+     {
+      "type": "privQA",
+      "min": 15
+     },
+     {
+      "type": "quickStart",
+      "min": 45
+     },
+     {
+      "type": "quickStart",
+      "min": 45
+     },
+     {
+      "type": "quickStart",
+      "min": 46
+     },
+     {
+      "type": "quickStart",
+      "min": 50
+     },
+     {
+      "type": "support",
+      "min": 45
+     }
+    ]
+   },
+   {
+    "date": "2026-08-12",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privCourse",
+      "min": 33
+     },
+     {
+      "type": "privQA",
+      "min": 15
+     },
+     {
+      "type": "privQA",
+      "min": 21
+     },
+     {
+      "type": "quickStart",
+      "min": 45
+     },
+     {
+      "type": "quickStart",
+      "min": 45
+     },
+     {
+      "type": "quickStart",
+      "min": 45
+     },
+     {
+      "type": "support",
+      "min": 42
+     }
+    ]
+   },
+   {
+    "date": "2026-08-13",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privCourse",
+      "min": 45
+     },
+     {
+      "type": "privQA",
+      "min": 15
+     },
+     {
+      "type": "privQA",
+      "min": 17
+     },
+     {
+      "type": "privQA",
+      "min": 15
+     },
+     {
+      "type": "privQA",
+      "min": 15
+     },
+     {
+      "type": "quickStart",
+      "min": 47
+     },
+     {
+      "type": "quickStart",
+      "min": 45
+     },
+     {
+      "type": "quickStart",
+      "min": 49
+     },
+     {
+      "type": "quickStart",
+      "min": 54
+     },
+     {
+      "type": "support",
+      "min": 44
+     },
+     {
+      "type": "support",
+      "min": 47
+     }
+    ]
+   },
+   {
+    "date": "2026-08-14",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privCourse",
+      "min": 31
+     },
+     {
+      "type": "privCourse",
+      "min": 48
+     },
+     {
+      "type": "privQA",
+      "min": 19
+     },
+     {
+      "type": "quickStart",
+      "min": 30
+     },
+     {
+      "type": "quickStart",
+      "min": 45
+     },
+     {
+      "type": "publicClass",
+      "min": 30
+     },
+     {
+      "type": "support",
+      "min": 35
+     }
+    ]
+   },
+   {
+    "date": "2026-08-15",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privCourse",
+      "min": 29
+     },
+     {
+      "type": "privCourse",
+      "min": 31
+     },
+     {
+      "type": "privQA",
+      "min": 20
+     },
+     {
+      "type": "quickStart",
+      "min": 53
+     },
+     {
+      "type": "quickStart",
+      "min": 30
+     },
+     {
+      "type": "quickStart",
+      "min": 31
+     },
+     {
+      "type": "support",
+      "min": 36
+     },
+     {
+      "type": "support",
+      "min": 45
+     },
+     {
+      "type": "support",
+      "min": 35
+     }
+    ]
+   },
+   {
+    "date": "2026-08-16",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privCourse",
+      "min": 44
+     },
+     {
+      "type": "privQA",
+      "min": 23
+     },
+     {
+      "type": "privQA",
+      "min": 18
+     },
+     {
+      "type": "quickStart",
+      "min": 45
+     },
+     {
+      "type": "quickStart",
+      "min": 45
+     },
+     {
+      "type": "quickStart",
+      "min": 32
+     },
+     {
+      "type": "support",
+      "min": 41
+     },
+     {
+      "type": "support",
+      "min": 30
+     }
+    ]
+   },
+   {
+    "date": "2026-08-17",
+    "status": "休息",
+    "sessions": []
+   },
+   {
+    "date": "2026-08-18",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privCourse",
+      "min": 45
+     },
+     {
+      "type": "privQA",
+      "min": 18
+     },
+     {
+      "type": "quickStart",
+      "min": 31
+     },
+     {
+      "type": "quickStart",
+      "min": 45
+     },
+     {
+      "type": "quickStart",
+      "min": 44
+     },
+     {
+      "type": "support",
+      "min": 45
+     }
+    ]
+   },
+   {
+    "date": "2026-08-19",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privCourse",
+      "min": 50
+     },
+     {
+      "type": "privQA",
+      "min": 16
+     },
+     {
+      "type": "privQA",
+      "min": 15
+     },
+     {
+      "type": "quickStart",
+      "min": 45
+     },
+     {
+      "type": "quickStart",
+      "min": 46
+     },
+     {
+      "type": "publicClass",
+      "min": 40
+     },
+     {
+      "type": "support",
+      "min": 54
+     }
+    ]
+   },
+   {
+    "date": "2026-08-20",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "support",
+      "min": 28
+     },
+     {
+      "type": "support",
+      "min": 45
+     }
+    ]
+   },
+   {
+    "date": "2026-08-21",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "support",
+      "min": 49
+     },
+     {
+      "type": "support",
+      "min": 41
+     }
+    ]
+   },
+   {
+    "date": "2026-08-22",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "support",
+      "min": 45
+     }
+    ]
+   },
+   {
+    "date": "2026-08-23",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "support",
+      "min": 60
+     }
+    ]
+   }
+  ]
+ },
+ "wxc": {
+  "name": "长沙万象城店",
+  "coach": "陈宇轩",
+  "pin": "8802",
+  "official": true,
+  "target": 4.5,
+  "flow": "",
+  "restDays": 18,
+  "restHours": 4.2,
+  "days": [
+   {
+    "date": "2026-08-01",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privQA",
+      "min": 38
+     },
+     {
+      "type": "privQA",
+      "min": 29
+     },
+     {
+      "type": "privQA",
+      "min": 34
+     },
+     {
+      "type": "quickStart",
+      "min": 50
+     },
+     {
+      "type": "quickStart",
+      "min": 47
+     },
+     {
+      "type": "quickStart",
+      "min": 43
+     },
+     {
+      "type": "quickStart",
+      "min": 44
+     },
+     {
+      "type": "support",
+      "min": 45
+     },
+     {
+      "type": "support",
+      "min": 59
+     }
+    ]
+   },
+   {
+    "date": "2026-08-02",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privCourse",
+      "min": 58
+     },
+     {
+      "type": "privQA",
+      "min": 22
+     },
+     {
+      "type": "privQA",
+      "min": 28
+     },
+     {
+      "type": "privQA",
+      "min": 24
+     },
+     {
+      "type": "quickStart",
+      "min": 48
+     },
+     {
+      "type": "quickStart",
+      "min": 43
+     },
+     {
+      "type": "quickStart",
+      "min": 44
+     },
+     {
+      "type": "publicClass",
+      "min": 32
+     },
+     {
+      "type": "support",
+      "min": 47
+     },
+     {
+      "type": "support",
+      "min": 59
+     }
+    ]
+   },
+   {
+    "date": "2026-08-03",
+    "status": "休息",
+    "sessions": []
+   },
+   {
+    "date": "2026-08-04",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privQA",
+      "min": 31
+     },
+     {
+      "type": "privQA",
+      "min": 31
+     },
+     {
+      "type": "privQA",
+      "min": 32
+     },
+     {
+      "type": "quickStart",
+      "min": 33
+     },
+     {
+      "type": "quickStart",
+      "min": 46
+     },
+     {
+      "type": "quickStart",
+      "min": 52
+     },
+     {
+      "type": "quickStart",
+      "min": 50
+     },
+     {
+      "type": "support",
+      "min": 43
+     },
+     {
+      "type": "support",
+      "min": 51
+     }
+    ]
+   },
+   {
+    "date": "2026-08-05",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privCourse",
+      "min": 48
+     },
+     {
+      "type": "privQA",
+      "min": 12
+     },
+     {
+      "type": "privQA",
+      "min": 15
+     },
+     {
+      "type": "quickStart",
+      "min": 49
+     },
+     {
+      "type": "quickStart",
+      "min": 46
+     },
+     {
+      "type": "quickStart",
+      "min": 55
+     },
+     {
+      "type": "quickStart",
+      "min": 46
+     },
+     {
+      "type": "support",
+      "min": 47
+     },
+     {
+      "type": "support",
+      "min": 44
+     },
+     {
+      "type": "support",
+      "min": 9
+     }
+    ]
+   },
+   {
+    "date": "2026-08-06",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privQA",
+      "min": 30
+     },
+     {
+      "type": "privQA",
+      "min": 29
+     },
+     {
+      "type": "privQA",
+      "min": 37
+     },
+     {
+      "type": "quickStart",
+      "min": 45
+     },
+     {
+      "type": "quickStart",
+      "min": 28
+     },
+     {
+      "type": "quickStart",
+      "min": 36
+     },
+     {
+      "type": "quickStart",
+      "min": 34
+     },
+     {
+      "type": "support",
+      "min": 39
+     },
+     {
+      "type": "support",
+      "min": 48
+     }
+    ]
+   },
+   {
+    "date": "2026-08-07",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privCourse",
+      "min": 47
+     },
+     {
+      "type": "privCourse",
+      "min": 34
+     },
+     {
+      "type": "privQA",
+      "min": 32
+     },
+     {
+      "type": "privQA",
+      "min": 30
+     },
+     {
+      "type": "quickStart",
+      "min": 47
+     },
+     {
+      "type": "quickStart",
+      "min": 31
+     },
+     {
+      "type": "quickStart",
+      "min": 32
+     },
+     {
+      "type": "support",
+      "min": 51
+     },
+     {
+      "type": "support",
+      "min": 51
+     }
+    ]
+   },
+   {
+    "date": "2026-08-08",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privQA",
+      "min": 37
+     },
+     {
+      "type": "privQA",
+      "min": 36
+     },
+     {
+      "type": "privQA",
+      "min": 32
+     },
+     {
+      "type": "quickStart",
+      "min": 39
+     },
+     {
+      "type": "quickStart",
+      "min": 44
+     },
+     {
+      "type": "quickStart",
+      "min": 30
+     },
+     {
+      "type": "quickStart",
+      "min": 40
+     },
+     {
+      "type": "support",
+      "min": 48
+     },
+     {
+      "type": "support",
+      "min": 45
+     }
+    ]
+   },
+   {
+    "date": "2026-08-09",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privCourse",
+      "min": 39
+     },
+     {
+      "type": "privQA",
+      "min": 30
+     },
+     {
+      "type": "privQA",
+      "min": 30
+     },
+     {
+      "type": "privQA",
+      "min": 36
+     },
+     {
+      "type": "quickStart",
+      "min": 39
+     },
+     {
+      "type": "quickStart",
+      "min": 45
+     },
+     {
+      "type": "publicClass",
+      "min": 36
+     },
+     {
+      "type": "support",
+      "min": 69
+     },
+     {
+      "type": "support",
+      "min": 34
+     }
+    ]
+   },
+   {
+    "date": "2026-08-10",
+    "status": "休息",
+    "sessions": []
+   },
+   {
+    "date": "2026-08-11",
+    "status": "上班",
+    "sessions": []
+   },
+   {
+    "date": "2026-08-12",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privCourse",
+      "min": 42
+     },
+     {
+      "type": "privQA",
+      "min": 33
+     },
+     {
+      "type": "privQA",
+      "min": 28
+     },
+     {
+      "type": "quickStart",
+      "min": 51
+     },
+     {
+      "type": "quickStart",
+      "min": 48
+     },
+     {
+      "type": "quickStart",
+      "min": 45
+     },
+     {
+      "type": "quickStart",
+      "min": 30
+     },
+     {
+      "type": "publicClass",
+      "min": 25
+     },
+     {
+      "type": "support",
+      "min": 54
+     },
+     {
+      "type": "support",
+      "min": 84
+     }
+    ]
+   },
+   {
+    "date": "2026-08-13",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privCourse",
+      "min": 39
+     },
+     {
+      "type": "privQA",
+      "min": 34
+     },
+     {
+      "type": "privQA",
+      "min": 31
+     },
+     {
+      "type": "privQA",
+      "min": 30
+     },
+     {
+      "type": "privQA",
+      "min": 31
+     },
+     {
+      "type": "quickStart",
+      "min": 32
+     },
+     {
+      "type": "quickStart",
+      "min": 43
+     },
+     {
+      "type": "quickStart",
+      "min": 56
+     },
+     {
+      "type": "support",
+      "min": 40
+     },
+     {
+      "type": "support",
+      "min": 58
+     }
+    ]
+   },
+   {
+    "date": "2026-08-14",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privQA",
+      "min": 35
+     },
+     {
+      "type": "privQA",
+      "min": 29
+     },
+     {
+      "type": "privQA",
+      "min": 28
+     },
+     {
+      "type": "privQA",
+      "min": 32
+     },
+     {
+      "type": "quickStart",
+      "min": 36
+     },
+     {
+      "type": "quickStart",
+      "min": 43
+     },
+     {
+      "type": "quickStart",
+      "min": 39
+     },
+     {
+      "type": "quickStart",
+      "min": 44
+     },
+     {
+      "type": "support",
+      "min": 46
+     },
+     {
+      "type": "support",
+      "min": 67
+     }
+    ]
+   },
+   {
+    "date": "2026-08-15",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privCourse",
+      "min": 26
+     },
+     {
+      "type": "privQA",
+      "min": 31
+     },
+     {
+      "type": "privQA",
+      "min": 30
+     },
+     {
+      "type": "privQA",
+      "min": 30
+     },
+     {
+      "type": "quickStart",
+      "min": 37
+     },
+     {
+      "type": "quickStart",
+      "min": 34
+     },
+     {
+      "type": "quickStart",
+      "min": 47
+     },
+     {
+      "type": "quickStart",
+      "min": 45
+     },
+     {
+      "type": "support",
+      "min": 58
+     },
+     {
+      "type": "support",
+      "min": 45
+     }
+    ]
+   },
+   {
+    "date": "2026-08-16",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privCourse",
+      "min": 36
+     },
+     {
+      "type": "privCourse",
+      "min": 43
+     },
+     {
+      "type": "privQA",
+      "min": 37
+     },
+     {
+      "type": "privQA",
+      "min": 30
+     },
+     {
+      "type": "privQA",
+      "min": 33
+     },
+     {
+      "type": "quickStart",
+      "min": 41
+     },
+     {
+      "type": "quickStart",
+      "min": 45
+     },
+     {
+      "type": "publicClass",
+      "min": 29
+     },
+     {
+      "type": "support",
+      "min": 60
+     },
+     {
+      "type": "support",
+      "min": 43
+     }
+    ]
+   },
+   {
+    "date": "2026-08-17",
+    "status": "休息",
+    "sessions": []
+   },
+   {
+    "date": "2026-08-18",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privQA",
+      "min": 33
+     },
+     {
+      "type": "privQA",
+      "min": 40
+     },
+     {
+      "type": "privQA",
+      "min": 34
+     },
+     {
+      "type": "privQA",
+      "min": 31
+     },
+     {
+      "type": "quickStart",
+      "min": 38
+     },
+     {
+      "type": "quickStart",
+      "min": 40
+     },
+     {
+      "type": "quickStart",
+      "min": 46
+     },
+     {
+      "type": "support",
+      "min": 54
+     },
+     {
+      "type": "support",
+      "min": 55
+     }
+    ]
+   },
+   {
+    "date": "2026-08-19",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privCourse",
+      "min": 35
+     },
+     {
+      "type": "privQA",
+      "min": 32
+     },
+     {
+      "type": "privQA",
+      "min": 35
+     },
+     {
+      "type": "quickStart",
+      "min": 39
+     },
+     {
+      "type": "quickStart",
+      "min": 41
+     },
+     {
+      "type": "quickStart",
+      "min": 44
+     },
+     {
+      "type": "support",
+      "min": 81
+     },
+     {
+      "type": "support",
+      "min": 38
+     }
+    ]
+   },
+   {
+    "date": "2026-08-20",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "support",
+      "min": 26
+     },
+     {
+      "type": "support",
+      "min": 35
+     }
+    ]
+   },
+   {
+    "date": "2026-08-21",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "support",
+      "min": 58
+     }
+    ]
+   },
+   {
+    "date": "2026-08-22",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "support",
+      "min": 43
+     },
+     {
+      "type": "support",
+      "min": 13
+     }
+    ]
+   },
+   {
+    "date": "2026-08-23",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "support",
+      "min": 52
+     },
+     {
+      "type": "support",
+      "min": 30
+     }
+    ]
+   }
+  ]
+ },
+ "mxh": {
+  "name": "长沙梅溪湖金茂店",
+  "coach": "何少卿",
+  "pin": "8803",
+  "official": true,
+  "target": 3.5,
+  "flow": "",
+  "restDays": 15,
+  "restHours": 4.2,
+  "days": [
+   {
+    "date": "2026-08-01",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privQA",
+      "min": 45
+     },
+     {
+      "type": "privQA",
+      "min": 24
+     },
+     {
+      "type": "privQA",
+      "min": 15
+     },
+     {
+      "type": "quickStart",
+      "min": 30
+     },
+     {
+      "type": "quickStart",
+      "min": 69
+     },
+     {
+      "type": "quickStart",
+      "min": 42
+     },
+     {
+      "type": "support",
+      "min": 37
+     },
+     {
+      "type": "support",
+      "min": 38
+     }
+    ]
+   },
+   {
+    "date": "2026-08-02",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privQA",
+      "min": 45
+     },
+     {
+      "type": "privQA",
+      "min": 28
+     },
+     {
+      "type": "privQA",
+      "min": 35
+     },
+     {
+      "type": "privQA",
+      "min": 29
+     },
+     {
+      "type": "privQA",
+      "min": 30
+     },
+     {
+      "type": "quickStart",
+      "min": 59
+     },
+     {
+      "type": "support",
+      "min": 34
+     },
+     {
+      "type": "support",
+      "min": 28
+     }
+    ]
+   },
+   {
+    "date": "2026-08-03",
+    "status": "休息",
+    "sessions": []
+   },
+   {
+    "date": "2026-08-04",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privQA",
+      "min": 30
+     },
+     {
+      "type": "privQA",
+      "min": 29
+     },
+     {
+      "type": "quickStart",
+      "min": 48
+     },
+     {
+      "type": "quickStart",
+      "min": 53
+     },
+     {
+      "type": "quickStart",
+      "min": 76
+     },
+     {
+      "type": "support",
+      "min": 41
+     },
+     {
+      "type": "support",
+      "min": 19
+     }
+    ]
+   },
+   {
+    "date": "2026-08-05",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privQA",
+      "min": 29
+     },
+     {
+      "type": "privQA",
+      "min": 30
+     },
+     {
+      "type": "quickStart",
+      "min": 46
+     },
+     {
+      "type": "quickStart",
+      "min": 42
+     },
+     {
+      "type": "support",
+      "min": 64
+     }
+    ]
+   },
+   {
+    "date": "2026-08-06",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privCourse",
+      "min": 36
+     },
+     {
+      "type": "privQA",
+      "min": 45
+     },
+     {
+      "type": "privQA",
+      "min": 34
+     },
+     {
+      "type": "quickStart",
+      "min": 38
+     },
+     {
+      "type": "quickStart",
+      "min": 46
+     },
+     {
+      "type": "quickStart",
+      "min": 28
+     },
+     {
+      "type": "support",
+      "min": 5
+     },
+     {
+      "type": "support",
+      "min": 31
+     }
+    ]
+   },
+   {
+    "date": "2026-08-07",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privQA",
+      "min": 33
+     },
+     {
+      "type": "privQA",
+      "min": 34
+     },
+     {
+      "type": "quickStart",
+      "min": 42
+     },
+     {
+      "type": "quickStart",
+      "min": 42
+     },
+     {
+      "type": "quickStart",
+      "min": 44
+     },
+     {
+      "type": "quickStart",
+      "min": 32
+     },
+     {
+      "type": "quickStart",
+      "min": 52
+     },
+     {
+      "type": "publicClass",
+      "min": 43
+     },
+     {
+      "type": "support",
+      "min": 29
+     },
+     {
+      "type": "support",
+      "min": 14
+     },
+     {
+      "type": "support",
+      "min": 29
+     }
+    ]
+   },
+   {
+    "date": "2026-08-08",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privQA",
+      "min": 30
+     },
+     {
+      "type": "privQA",
+      "min": 28
+     },
+     {
+      "type": "privQA",
+      "min": 32
+     },
+     {
+      "type": "quickStart",
+      "min": 35
+     },
+     {
+      "type": "quickStart",
+      "min": 43
+     },
+     {
+      "type": "quickStart",
+      "min": 30
+     },
+     {
+      "type": "support",
+      "min": 19
+     }
+    ]
+   },
+   {
+    "date": "2026-08-09",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privQA",
+      "min": 30
+     },
+     {
+      "type": "privQA",
+      "min": 38
+     },
+     {
+      "type": "quickStart",
+      "min": 28
+     },
+     {
+      "type": "quickStart",
+      "min": 90
+     },
+     {
+      "type": "support",
+      "min": 34
+     },
+     {
+      "type": "support",
+      "min": 30
+     }
+    ]
+   },
+   {
+    "date": "2026-08-10",
+    "status": "休息",
+    "sessions": []
+   },
+   {
+    "date": "2026-08-11",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privQA",
+      "min": 21
+     },
+     {
+      "type": "privQA",
+      "min": 33
+     },
+     {
+      "type": "privQA",
+      "min": 24
+     },
+     {
+      "type": "quickStart",
+      "min": 83
+     },
+     {
+      "type": "support",
+      "min": 28
+     },
+     {
+      "type": "support",
+      "min": 20
+     },
+     {
+      "type": "support",
+      "min": 32
+     }
+    ]
+   },
+   {
+    "date": "2026-08-12",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privQA",
+      "min": 30
+     },
+     {
+      "type": "privQA",
+      "min": 30
+     },
+     {
+      "type": "privQA",
+      "min": 45
+     },
+     {
+      "type": "quickStart",
+      "min": 52
+     },
+     {
+      "type": "support",
+      "min": 28
+     },
+     {
+      "type": "support",
+      "min": 28
+     }
+    ]
+   },
+   {
+    "date": "2026-08-13",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privQA",
+      "min": 45
+     },
+     {
+      "type": "privQA",
+      "min": 24
+     },
+     {
+      "type": "privQA",
+      "min": 20
+     },
+     {
+      "type": "privQA",
+      "min": 40
+     },
+     {
+      "type": "quickStart",
+      "min": 28
+     },
+     {
+      "type": "quickStart",
+      "min": 44
+     },
+     {
+      "type": "quickStart",
+      "min": 28
+     },
+     {
+      "type": "quickStart",
+      "min": 44
+     },
+     {
+      "type": "quickStart",
+      "min": 40
+     },
+     {
+      "type": "support",
+      "min": 28
+     },
+     {
+      "type": "support",
+      "min": 30
+     },
+     {
+      "type": "support",
+      "min": 30
+     }
+    ]
+   },
+   {
+    "date": "2026-08-14",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privCourse",
+      "min": 31
+     },
+     {
+      "type": "quickStart",
+      "min": 48
+     },
+     {
+      "type": "quickStart",
+      "min": 44
+     },
+     {
+      "type": "publicClass",
+      "min": 31
+     },
+     {
+      "type": "support",
+      "min": 7
+     }
+    ]
+   },
+   {
+    "date": "2026-08-15",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privQA",
+      "min": 31
+     },
+     {
+      "type": "privQA",
+      "min": 15
+     },
+     {
+      "type": "quickStart",
+      "min": 39
+     },
+     {
+      "type": "quickStart",
+      "min": 44
+     },
+     {
+      "type": "quickStart",
+      "min": 44
+     },
+     {
+      "type": "quickStart",
+      "min": 32
+     },
+     {
+      "type": "support",
+      "min": 35
+     },
+     {
+      "type": "support",
+      "min": 0
+     }
+    ]
+   },
+   {
+    "date": "2026-08-16",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privQA",
+      "min": 30
+     },
+     {
+      "type": "privQA",
+      "min": 28
+     },
+     {
+      "type": "quickStart",
+      "min": 58
+     },
+     {
+      "type": "quickStart",
+      "min": 28
+     },
+     {
+      "type": "quickStart",
+      "min": 58
+     },
+     {
+      "type": "support",
+      "min": 28
+     },
+     {
+      "type": "support",
+      "min": 28
+     }
+    ]
+   },
+   {
+    "date": "2026-08-17",
+    "status": "休息",
+    "sessions": []
+   },
+   {
+    "date": "2026-08-18",
+    "status": "上班",
+    "sessions": []
+   },
+   {
+    "date": "2026-08-19",
+    "status": "上班",
+    "sessions": []
+   },
+   {
+    "date": "2026-08-20",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "support",
+      "min": 31
+     }
+    ]
+   },
+   {
+    "date": "2026-08-21",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "support",
+      "min": 30
+     },
+     {
+      "type": "support",
+      "min": 6
+     },
+     {
+      "type": "support",
+      "min": 23
+     }
+    ]
+   },
+   {
+    "date": "2026-08-22",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "support",
+      "min": 28
+     },
+     {
+      "type": "support",
+      "min": 15
+     }
+    ]
+   },
+   {
+    "date": "2026-08-23",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "support",
+      "min": 15
+     }
+    ]
+   }
+  ]
+ },
+ "gjz": {
+  "name": "长沙国金街店",
+  "coach": "黄绪",
+  "pin": "8804",
+  "official": true,
+  "target": 4.5,
+  "flow": "",
+  "restDays": 11,
+  "restHours": 1.1,
+  "days": [
+   {
+    "date": "2026-08-01",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privQA",
+      "min": 14
+     },
+     {
+      "type": "privQA",
+      "min": 45
+     },
+     {
+      "type": "privQA",
+      "min": 45
+     },
+     {
+      "type": "quickStart",
+      "min": 29
+     },
+     {
+      "type": "quickStart",
+      "min": 53
+     },
+     {
+      "type": "quickStart",
+      "min": 29
+     },
+     {
+      "type": "support",
+      "min": 71
+     }
+    ]
+   },
+   {
+    "date": "2026-08-02",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privQA",
+      "min": 15
+     },
+     {
+      "type": "privQA",
+      "min": 30
+     },
+     {
+      "type": "privQA",
+      "min": 16
+     },
+     {
+      "type": "privQA",
+      "min": 15
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "quickStart",
+      "min": 15
+     },
+     {
+      "type": "quickStart",
+      "min": 46
+     },
+     {
+      "type": "quickStart",
+      "min": 30
+     },
+     {
+      "type": "quickStart",
+      "min": 56
+     },
+     {
+      "type": "quickStart",
+      "min": 33
+     },
+     {
+      "type": "support",
+      "min": 68
+     }
+    ]
+   },
+   {
+    "date": "2026-08-03",
+    "status": "休息",
+    "sessions": []
+   },
+   {
+    "date": "2026-08-04",
+    "status": "上班",
+    "sessions": []
+   },
+   {
+    "date": "2026-08-05",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privQA",
+      "min": 15
+     },
+     {
+      "type": "privQA",
+      "min": 32
+     },
+     {
+      "type": "privQA",
+      "min": 38
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "quickStart",
+      "min": 28
+     },
+     {
+      "type": "quickStart",
+      "min": 0
+     },
+     {
+      "type": "quickStart",
+      "min": 30
+     },
+     {
+      "type": "quickStart",
+      "min": 50
+     },
+     {
+      "type": "support",
+      "min": 60
+     }
+    ]
+   },
+   {
+    "date": "2026-08-06",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privCourse",
+      "min": 60
+     },
+     {
+      "type": "privCourse",
+      "min": 36
+     },
+     {
+      "type": "privQA",
+      "min": 26
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 27
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 11
+     },
+     {
+      "type": "privQA",
+      "min": 15
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 45
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "quickStart",
+      "min": 28
+     },
+     {
+      "type": "quickStart",
+      "min": 30
+     },
+     {
+      "type": "quickStart",
+      "min": 56
+     },
+     {
+      "type": "quickStart",
+      "min": 30
+     },
+     {
+      "type": "quickStart",
+      "min": 30
+     },
+     {
+      "type": "support",
+      "min": 60
+     }
+    ]
+   },
+   {
+    "date": "2026-08-07",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privQA",
+      "min": 45
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 15
+     },
+     {
+      "type": "privQA",
+      "min": 15
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 15
+     },
+     {
+      "type": "quickStart",
+      "min": 28
+     },
+     {
+      "type": "quickStart",
+      "min": 30
+     },
+     {
+      "type": "quickStart",
+      "min": 36
+     },
+     {
+      "type": "support",
+      "min": 60
+     }
+    ]
+   },
+   {
+    "date": "2026-08-08",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privCourse",
+      "min": 28
+     },
+     {
+      "type": "privQA",
+      "min": 45
+     },
+     {
+      "type": "privQA",
+      "min": 15
+     },
+     {
+      "type": "privQA",
+      "min": 15
+     },
+     {
+      "type": "privQA",
+      "min": 15
+     },
+     {
+      "type": "quickStart",
+      "min": 29
+     },
+     {
+      "type": "quickStart",
+      "min": 33
+     },
+     {
+      "type": "quickStart",
+      "min": 25
+     },
+     {
+      "type": "publicClass",
+      "min": 32
+     },
+     {
+      "type": "support",
+      "min": 60
+     }
+    ]
+   },
+   {
+    "date": "2026-08-09",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privCourse",
+      "min": 28
+     },
+     {
+      "type": "privQA",
+      "min": 36
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 15
+     },
+     {
+      "type": "privQA",
+      "min": 45
+     },
+     {
+      "type": "quickStart",
+      "min": 36
+     },
+     {
+      "type": "quickStart",
+      "min": 30
+     },
+     {
+      "type": "support",
+      "min": 60
+     }
+    ]
+   },
+   {
+    "date": "2026-08-10",
+    "status": "休息",
+    "sessions": []
+   },
+   {
+    "date": "2026-08-11",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privQA",
+      "min": 15
+     },
+     {
+      "type": "privQA",
+      "min": 26
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 15
+     },
+     {
+      "type": "quickStart",
+      "min": 88
+     },
+     {
+      "type": "quickStart",
+      "min": 34
+     },
+     {
+      "type": "quickStart",
+      "min": 37
+     },
+     {
+      "type": "support",
+      "min": 90
+     }
+    ]
+   },
+   {
+    "date": "2026-08-12",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privCourse",
+      "min": 28
+     },
+     {
+      "type": "privQA",
+      "min": 27
+     },
+     {
+      "type": "privQA",
+      "min": 15
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 41
+     },
+     {
+      "type": "privQA",
+      "min": 15
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 15
+     },
+     {
+      "type": "privQA",
+      "min": 15
+     },
+     {
+      "type": "quickStart",
+      "min": 40
+     },
+     {
+      "type": "quickStart",
+      "min": 32
+     },
+     {
+      "type": "quickStart",
+      "min": 29
+     },
+     {
+      "type": "quickStart",
+      "min": 28
+     },
+     {
+      "type": "quickStart",
+      "min": 32
+     },
+     {
+      "type": "support",
+      "min": 87
+     }
+    ]
+   },
+   {
+    "date": "2026-08-13",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privCourse",
+      "min": 29
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 15
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "quickStart",
+      "min": 28
+     },
+     {
+      "type": "quickStart",
+      "min": 30
+     },
+     {
+      "type": "quickStart",
+      "min": 90
+     },
+     {
+      "type": "support",
+      "min": 90
+     }
+    ]
+   },
+   {
+    "date": "2026-08-14",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privQA",
+      "min": 15
+     },
+     {
+      "type": "privQA",
+      "min": 15
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 17
+     },
+     {
+      "type": "quickStart",
+      "min": 28
+     },
+     {
+      "type": "quickStart",
+      "min": 30
+     },
+     {
+      "type": "support",
+      "min": 55
+     },
+     {
+      "type": "support",
+      "min": 30
+     }
+    ]
+   },
+   {
+    "date": "2026-08-15",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 15
+     },
+     {
+      "type": "privQA",
+      "min": 15
+     },
+     {
+      "type": "quickStart",
+      "min": 28
+     },
+     {
+      "type": "quickStart",
+      "min": 28
+     },
+     {
+      "type": "quickStart",
+      "min": 30
+     },
+     {
+      "type": "quickStart",
+      "min": 28
+     },
+     {
+      "type": "publicClass",
+      "min": 28
+     },
+     {
+      "type": "support",
+      "min": 70
+     }
+    ]
+   },
+   {
+    "date": "2026-08-16",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privQA",
+      "min": 0
+     },
+     {
+      "type": "privQA",
+      "min": 0
+     },
+     {
+      "type": "privQA",
+      "min": 9
+     },
+     {
+      "type": "privQA",
+      "min": 11
+     },
+     {
+      "type": "privQA",
+      "min": 15
+     },
+     {
+      "type": "quickStart",
+      "min": 90
+     },
+     {
+      "type": "quickStart",
+      "min": 30
+     },
+     {
+      "type": "quickStart",
+      "min": 52
+     },
+     {
+      "type": "support",
+      "min": 129
+     }
+    ]
+   },
+   {
+    "date": "2026-08-17",
+    "status": "休息",
+    "sessions": []
+   },
+   {
+    "date": "2026-08-18",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privQA",
+      "min": 30
+     },
+     {
+      "type": "privQA",
+      "min": 30
+     },
+     {
+      "type": "privQA",
+      "min": 29
+     },
+     {
+      "type": "privQA",
+      "min": 30
+     },
+     {
+      "type": "privQA",
+      "min": 33
+     },
+     {
+      "type": "quickStart",
+      "min": 37
+     },
+     {
+      "type": "quickStart",
+      "min": 28
+     },
+     {
+      "type": "support",
+      "min": 60
+     }
+    ]
+   },
+   {
+    "date": "2026-08-19",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privQA",
+      "min": 30
+     },
+     {
+      "type": "privQA",
+      "min": 32
+     },
+     {
+      "type": "privQA",
+      "min": 31
+     },
+     {
+      "type": "privQA",
+      "min": 30
+     },
+     {
+      "type": "privQA",
+      "min": 30
+     },
+     {
+      "type": "privQA",
+      "min": 45
+     },
+     {
+      "type": "privQA",
+      "min": 30
+     },
+     {
+      "type": "privQA",
+      "min": 43
+     },
+     {
+      "type": "quickStart",
+      "min": 90
+     },
+     {
+      "type": "quickStart",
+      "min": 30
+     },
+     {
+      "type": "quickStart",
+      "min": 52
+     },
+     {
+      "type": "support",
+      "min": 63
+     }
+    ]
+   },
+   {
+    "date": "2026-08-20",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "support",
+      "min": 82
+     }
+    ]
+   },
+   {
+    "date": "2026-08-21",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "support",
+      "min": 68
+     }
+    ]
+   },
+   {
+    "date": "2026-08-22",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "support",
+      "min": 58
+     }
+    ]
+   },
+   {
+    "date": "2026-08-23",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "support",
+      "min": 60
+     }
+    ]
+   }
+  ]
+ },
+ "bch": {
+  "name": "长沙北辰荟店",
+  "coach": "吴昊东",
+  "pin": "8805",
+  "official": true,
+  "target": 4.0,
+  "flow": "",
+  "restDays": 11,
+  "restHours": 2.1,
+  "days": [
+   {
+    "date": "2026-08-01",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "quickStart",
+      "min": 58
+     },
+     {
+      "type": "quickStart",
+      "min": 58
+     },
+     {
+      "type": "quickStart",
+      "min": 65
+     },
+     {
+      "type": "quickStart",
+      "min": 58
+     },
+     {
+      "type": "quickStart",
+      "min": 63
+     },
+     {
+      "type": "quickStart",
+      "min": 58
+     }
+    ]
+   },
+   {
+    "date": "2026-08-02",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privCourse",
+      "min": 57
+     },
+     {
+      "type": "privQA",
+      "min": 28
+     },
+     {
+      "type": "quickStart",
+      "min": 72
+     },
+     {
+      "type": "quickStart",
+      "min": 58
+     },
+     {
+      "type": "quickStart",
+      "min": 58
+     },
+     {
+      "type": "support",
+      "min": 63
+     }
+    ]
+   },
+   {
+    "date": "2026-08-03",
+    "status": "休息",
+    "sessions": []
+   },
+   {
+    "date": "2026-08-04",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privCourse",
+      "min": 50
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "quickStart",
+      "min": 52
+     },
+     {
+      "type": "quickStart",
+      "min": 43
+     },
+     {
+      "type": "support",
+      "min": 43
+     }
+    ]
+   },
+   {
+    "date": "2026-08-05",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privCourse",
+      "min": 57
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 16
+     },
+     {
+      "type": "privQA",
+      "min": 14
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 33
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "quickStart",
+      "min": 29
+     },
+     {
+      "type": "quickStart",
+      "min": 28
+     },
+     {
+      "type": "publicClass",
+      "min": 47
+     },
+     {
+      "type": "support",
+      "min": 54
+     },
+     {
+      "type": "support",
+      "min": 43
+     }
+    ]
+   },
+   {
+    "date": "2026-08-06",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privCourse",
+      "min": 42
+     },
+     {
+      "type": "privQA",
+      "min": 17
+     },
+     {
+      "type": "privQA",
+      "min": 21
+     },
+     {
+      "type": "privQA",
+      "min": 16
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 19
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "quickStart",
+      "min": 28
+     },
+     {
+      "type": "quickStart",
+      "min": 28
+     },
+     {
+      "type": "quickStart",
+      "min": 28
+     },
+     {
+      "type": "quickStart",
+      "min": 29
+     },
+     {
+      "type": "support",
+      "min": 75
+     },
+     {
+      "type": "support",
+      "min": 13
+     },
+     {
+      "type": "support",
+      "min": 28
+     }
+    ]
+   },
+   {
+    "date": "2026-08-07",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 29
+     },
+     {
+      "type": "quickStart",
+      "min": 28
+     },
+     {
+      "type": "quickStart",
+      "min": 28
+     },
+     {
+      "type": "quickStart",
+      "min": 30
+     },
+     {
+      "type": "quickStart",
+      "min": 28
+     },
+     {
+      "type": "quickStart",
+      "min": 29
+     },
+     {
+      "type": "support",
+      "min": 43
+     },
+     {
+      "type": "support",
+      "min": 28
+     }
+    ]
+   },
+   {
+    "date": "2026-08-08",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 18
+     },
+     {
+      "type": "quickStart",
+      "min": 28
+     }
+    ]
+   },
+   {
+    "date": "2026-08-09",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privQA",
+      "min": 34
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 22
+     },
+     {
+      "type": "quickStart",
+      "min": 38
+     },
+     {
+      "type": "quickStart",
+      "min": 29
+     },
+     {
+      "type": "quickStart",
+      "min": 28
+     },
+     {
+      "type": "quickStart",
+      "min": 28
+     },
+     {
+      "type": "support",
+      "min": 43
+     }
+    ]
+   },
+   {
+    "date": "2026-08-10",
+    "status": "休息",
+    "sessions": []
+   },
+   {
+    "date": "2026-08-11",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privCourse",
+      "min": 52
+     },
+     {
+      "type": "quickStart",
+      "min": 28
+     },
+     {
+      "type": "quickStart",
+      "min": 28
+     },
+     {
+      "type": "quickStart",
+      "min": 43
+     },
+     {
+      "type": "quickStart",
+      "min": 28
+     },
+     {
+      "type": "quickStart",
+      "min": 43
+     },
+     {
+      "type": "support",
+      "min": 0
+     },
+     {
+      "type": "support",
+      "min": 58
+     },
+     {
+      "type": "support",
+      "min": 44
+     }
+    ]
+   },
+   {
+    "date": "2026-08-12",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privQA",
+      "min": 38
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 19
+     },
+     {
+      "type": "quickStart",
+      "min": 28
+     },
+     {
+      "type": "quickStart",
+      "min": 57
+     },
+     {
+      "type": "quickStart",
+      "min": 43
+     },
+     {
+      "type": "quickStart",
+      "min": 43
+     },
+     {
+      "type": "quickStart",
+      "min": 45
+     },
+     {
+      "type": "quickStart",
+      "min": 43
+     },
+     {
+      "type": "publicClass",
+      "min": 30
+     },
+     {
+      "type": "support",
+      "min": 56
+     }
+    ]
+   },
+   {
+    "date": "2026-08-13",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privQA",
+      "min": 34
+     },
+     {
+      "type": "privQA",
+      "min": 15
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 26
+     },
+     {
+      "type": "privQA",
+      "min": 45
+     },
+     {
+      "type": "privQA",
+      "min": 14
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "quickStart",
+      "min": 43
+     },
+     {
+      "type": "quickStart",
+      "min": 44
+     },
+     {
+      "type": "support",
+      "min": 67
+     },
+     {
+      "type": "support",
+      "min": 58
+     }
+    ]
+   },
+   {
+    "date": "2026-08-14",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privCourse",
+      "min": 49
+     },
+     {
+      "type": "privCourse",
+      "min": 28
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 12
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 16
+     },
+     {
+      "type": "privQA",
+      "min": 24
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 12
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "quickStart",
+      "min": 27
+     },
+     {
+      "type": "support",
+      "min": 43
+     }
+    ]
+   },
+   {
+    "date": "2026-08-15",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 45
+     },
+     {
+      "type": "quickStart",
+      "min": 28
+     },
+     {
+      "type": "quickStart",
+      "min": 32
+     },
+     {
+      "type": "quickStart",
+      "min": 28
+     },
+     {
+      "type": "quickStart",
+      "min": 28
+     },
+     {
+      "type": "support",
+      "min": 43
+     },
+     {
+      "type": "support",
+      "min": 28
+     },
+     {
+      "type": "support",
+      "min": 0
+     }
+    ]
+   },
+   {
+    "date": "2026-08-16",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 18
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 24
+     },
+     {
+      "type": "privQA",
+      "min": 27
+     },
+     {
+      "type": "quickStart",
+      "min": 22
+     },
+     {
+      "type": "quickStart",
+      "min": 29
+     },
+     {
+      "type": "quickStart",
+      "min": 40
+     },
+     {
+      "type": "quickStart",
+      "min": 43
+     },
+     {
+      "type": "support",
+      "min": 43
+     },
+     {
+      "type": "support",
+      "min": 73
+     }
+    ]
+   },
+   {
+    "date": "2026-08-17",
+    "status": "休息",
+    "sessions": []
+   },
+   {
+    "date": "2026-08-18",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privCourse",
+      "min": 65
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "quickStart",
+      "min": 78
+     },
+     {
+      "type": "quickStart",
+      "min": 28
+     },
+     {
+      "type": "quickStart",
+      "min": 28
+     },
+     {
+      "type": "quickStart",
+      "min": 28
+     },
+     {
+      "type": "quickStart",
+      "min": 33
+     },
+     {
+      "type": "quickStart",
+      "min": 28
+     },
+     {
+      "type": "quickStart",
+      "min": 43
+     },
+     {
+      "type": "support",
+      "min": 58
+     },
+     {
+      "type": "support",
+      "min": 10
+     }
+    ]
+   },
+   {
+    "date": "2026-08-19",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 18
+     },
+     {
+      "type": "privQA",
+      "min": 13
+     },
+     {
+      "type": "privQA",
+      "min": 45
+     },
+     {
+      "type": "quickStart",
+      "min": 29
+     },
+     {
+      "type": "quickStart",
+      "min": 28
+     },
+     {
+      "type": "quickStart",
+      "min": 28
+     },
+     {
+      "type": "support",
+      "min": 45
+     },
+     {
+      "type": "support",
+      "min": 78
+     }
+    ]
+   },
+   {
+    "date": "2026-08-20",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "support",
+      "min": 58
+     }
+    ]
+   },
+   {
+    "date": "2026-08-21",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "support",
+      "min": 58
+     }
+    ]
+   },
+   {
+    "date": "2026-08-22",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "support",
+      "min": 35
+     }
+    ]
+   },
+   {
+    "date": "2026-08-23",
+    "status": "上班",
+    "sessions": [
+     {
+      "type": "support",
+      "min": 7
+     }
+    ]
+   }
+  ]
+ }
+}

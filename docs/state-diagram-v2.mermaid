@@ -1,0 +1,33 @@
+stateDiagram-v2
+    [*] --> NoType : renderExam() 读取 K_EXAM_TYPE
+
+    NoType : 未选类型
+    NoType : 解析禁用 / OCR 禁用 / 粘贴框可输入
+
+    Ready : 已选类型
+    Ready : 解析可用 / OCR 可用
+
+    Ocr : OCR 识别中
+    Ocr : 串行第 N/M 张 · 按钮锁定
+
+    ListStage : 列表核对态 examStage=list
+    CardStage : 卡片作答态 examStage=cards
+
+    NoType --> Ready : 点击 chip 选类型 / saveExamType
+
+    Ready --> Ready : 输入或粘贴文本 / 防抖 saveExamPaste
+    Ready --> Ocr : 点「上传截图识别」
+    Ocr --> Ready : 逐张 examCleanOCR / 空行分隔追加粘贴框
+    Ocr --> Ready : 失败降级 toast
+
+    Ready --> ListStage : 点「解析并调出题目」 / examMatchAll(lines, examType)
+    ListStage --> ListStage : 移除单项 / 批量移除未找到
+    ListStage --> CardStage : 确认并展开 / examSaveConfirmed(sig)
+    CardStage --> ListStage : 重新解析
+
+    ListStage --> Ready : 切换类型（签名失效，结果清空）
+    CardStage --> Ready : 切换类型（签名失效，结果清空）
+
+    ListStage --> NoType : 点「清空」confirm 通过
+    CardStage --> NoType : 点「清空」confirm 通过
+    Ready --> NoType : 点「清空」confirm 通过
