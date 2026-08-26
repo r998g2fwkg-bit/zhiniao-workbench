@@ -31,6 +31,18 @@ jobs:
           sudo ln -s "$GITHUB_WORKSPACE" /Users/zhoujiale/WorkBuddy/2026-08-04-16-18-01
           python3 build.py
 
+      - name: 同步静态资源到 dist
+        run: |
+          # build.py 未复制 assets/avatars/，而 release_check.py 断言产物中头像必须存在。
+          # 红线要求不改核心脚本，因此在 CI 侧把源码资源复制到构建产物目录。
+          if [ -d "assets/avatars" ]; then
+            mkdir -p dist/assets/avatars
+            cp -r assets/avatars/* dist/assets/avatars/
+            echo "已复制 assets/avatars/ → dist/assets/avatars/"
+          else
+            echo "assets/avatars/ 不存在，跳过"
+          fi
+
       - name: 发布门禁校验 (release_check.py)
         run: |
           # release_check.py 中 NODE 硬编码为本机 node 二进制路径，链接到 runner 的 node。
