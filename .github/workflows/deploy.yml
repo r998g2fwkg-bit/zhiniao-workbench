@@ -1,0 +1,67 @@
+name: Deploy to CloudBase
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Build · Check · Deploy
+    runs-on: ubuntu-latest
+    # CI=true 让 CloudBase CLI 识别为持续集成环境，避免任何交互式提示阻塞构建
+    env:
+      CI: "true"
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 配置 Python 环境
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: 执行构建 (build.py)
+        run: |
+          # build.py / release_check.py 中 ROOT 硬编码为本机 macOS 绝对路径。
+          # 红线要求不得修改这两个核心脚本，因此在 Linux runner 上用符号链接
+          # 把该路径指向仓库根目录（=$GITHUB_WORKSPACE），仅做环境适配、不改源码。
+          sudo mkdir -p /Users/zhoujiale/WorkBuddy
+          sudo rm -rf /Users/zhoujiale/WorkBuddy/2026-08-04-16-18-01
+          sudo ln -s "$GITHUB_WORKSPACE" /Users/zhoujiale/WorkBuddy/2026-08-04-16-18-01
+          python3 build.py
+
+      - name: 发布门禁校验 (release_check.py)
+        run: |
+          # release_check.py 中 NODE 硬编码为本机 node 二进制路径，链接到 runner 的 node。
+          NODE_BIN="$(command -v node || true)"
+          if [ -z "$NODE_BIN" ]; then
+            sudo apt-get update -y && sudo apt-get install -y nodejs
+            NODE_BIN="$(command -v node || true)"
+          fi
+          sudo mkdir -p /Users/zhoujiale/.workbuddy/binaries/node/versions/22.12.0/bin
+          sudo rm -f /Users/zhoujiale/.workbuddy/binaries/node/versions/22.12.0/bin/node
+          sudo ln -s "$NODE_BIN" /Users/zhoujiale/.workbuddy/binaries/node/versions/22.12.0/bin/node
+          # 校验失败将非零退出，自动终止后续部署（release_check.py 自身 sys.exit(1)）
+          python3 release_check.py
+
+      - name: 配置 Node.js 环境
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: 安装 CloudBase CLI
+        run: npm install -g @cloudbase/cli@3.8.0
+
+      - name: CloudBase 登录鉴权
+        run: |
+          NPM_GLOBAL_BIN="$(npm config get prefix)/bin"
+          export PATH="$NPM_GLOBAL_BIN:$PATH"
+          # 非交互式密钥登录；凭证全部来自 GitHub Secrets，无明文
+          tcb login --apiKeyId "${{ secrets.TENCENTCLOUD_SECRET_ID }}" --apiKey "${{ secrets.TENCENTCLOUD_SECRET_KEY }}" < /dev/null
+
+      - name: 执行静态托管部署
+        run: |
+          NPM_GLOBAL_BIN="$(npm config get prefix)/bin"
+          export PATH="$NPM_GLOBAL_BIN:$PATH"
+          tcb hosting deploy ./dist -e "${{ secrets.TCB_ENV_ID }}"
