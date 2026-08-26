@@ -72,6 +72,17 @@ jobs:
           # 非交互式密钥登录；凭证全部来自 GitHub Secrets，无明文
           tcb login --apiKeyId "${{ secrets.TENCENTCLOUD_SECRET_ID }}" --apiKey "${{ secrets.TENCENTCLOUD_SECRET_KEY }}" < /dev/null
 
+      - name: 诊断 envId（仅长度，不泄露内容）
+        run: |
+          LEN=${#TCB_ENV_ID}
+          if [ "$LEN" = "25" ]; then
+            echo "TCB_ENV_ID 长度=$LEN ✅ 长度正确"
+          else
+            echo "TCB_ENV_ID 长度=$LEN ⚠️ 期望 25（多/少字符或 secret 未注入）"
+          fi
+        env:
+          TCB_ENV_ID: ${{ secrets.TCB_ENV_ID }}
+
       - name: 执行静态托管部署
         run: |
           NPM_GLOBAL_BIN="$(npm config get prefix)/bin"
