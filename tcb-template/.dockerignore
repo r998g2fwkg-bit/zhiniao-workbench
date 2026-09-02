@@ -1,0 +1,7 @@
+# 构建上下文排除项（注意：.env 必须保留，供云端构建时注入环境变量）
+node_modules
+logs
+.git
+.DS_Store
+dist
+npm-debug.log
