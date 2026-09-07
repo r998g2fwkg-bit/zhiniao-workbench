@@ -207,7 +207,7 @@ function buildDetail(table, cols) {
       if (!id) return res.json(error('参数错误'))
       const row = await db.findOne(table, { id }, cols)
       if (!row) return res.json(error('内容不存在', 404))
-      if (row.is_deleted) return res.json(error('内容不存在', 404))
+      if (row.is_deleted === true) return res.json(error('内容不存在', 404))
       if (req.user.role !== 'admin' && req.user.role !== 'super_admin' && row.status !== 'published') return res.json(error('内容不存在', 404))
       return res.json(success(row, '查询成功'))
     } catch (e) {
@@ -315,7 +315,7 @@ async function scriptDelete(req, res) {
     if (!id) return res.json(error('参数错误'))
     const row = await db.findOne('cms_script', { id }, 'id, title, is_deleted')
     if (!row) return res.json(error('内容不存在'))
-    if (row.is_deleted) return res.json(error('内容已删除'))
+    if (row.is_deleted === true) return res.json(error('内容已删除'))
     /* P0 修复：软删除（is_deleted=TRUE），不再物理 DELETE */
     await db.query(
       `UPDATE cms_script SET is_deleted = TRUE, status = 'draft', update_time = CURRENT_TIMESTAMP WHERE id = $1`,
@@ -386,7 +386,7 @@ async function demoDelete(req, res) {
     if (!id) return res.json(error('参数错误'))
     const row = await db.findOne('cms_demo', { id }, 'id, title, is_deleted')
     if (!row) return res.json(error('内容不存在'))
-    if (row.is_deleted) return res.json(error('内容已删除'))
+    if (row.is_deleted === true) return res.json(error('内容已删除'))
     /* P0 修复：软删除（is_deleted=TRUE），不再物理 DELETE */
     await db.query(
       `UPDATE cms_demo SET is_deleted = TRUE, status = 'draft', update_time = CURRENT_TIMESTAMP WHERE id = $1`,
