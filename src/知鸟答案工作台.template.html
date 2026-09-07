@@ -8051,10 +8051,13 @@ function currentVoice(){
   if(name){ const v=voices.find(x=>x.name===name); if(v) return v; }
   const zh=voices.filter(v=>/^zh/i.test(v.lang));
   if(zh.length){
-    // 1) 优先增强版/高品质中文语音（macOS 下载的增强语音等）
+    // 1) 优先 Microsoft Online 中文语音（跨平台一致性，macOS Edge 等不走 zh[0] 系统语音）
+    const msOnline=zh.find(v=>/microsoft.*online/i.test((v.name||'')+' '+(v.voiceURI||'')));
+    if(msOnline) return msOnline;
+    // 2) 优先增强版/高品质中文语音（macOS 下载的增强语音等）
     const enh=zh.find(isEnhancedVoice);
     if(enh) return enh;
-    // 2) Edge 默认晓晓（用户偏好，通常为神经语音）
+    // 3) Edge 默认晓晓（用户偏好，通常为神经语音）
     const xiaoxiao=zh.find(v=>/Xiaoxiao/i.test(v.name));
     if(xiaoxiao) return xiaoxiao;
     return zh[0];
