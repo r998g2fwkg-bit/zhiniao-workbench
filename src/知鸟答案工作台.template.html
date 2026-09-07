@@ -3976,12 +3976,31 @@ function loadCategoryTree(force){
     return window.__CATEGORY_TREE__;
   }).catch(function(){ return null; });
 }
+/* 话术分类固定顺序（Phase 7）：
+   统一 6 大一级分类的展示顺序，修正随机排序问题；
+   店效服务 → iPhone → iPad → Mac → Apple Watch → 配件和服务
+   所有生成 sheet 列表的地方统一引用此常量；未知分类排在 6 个正式分类之后。 */
+const SHEET_ORDER=[
+  '店内服务销售话术系列',
+  'iPhone销售话术系列',
+  'iPad销售话术系列',
+  'Mac销售话术系列',
+  ' Watch销售话术系列',
+  '配件和服务销售话术系列'
+];
+/* 给任意 sheet 列表按 SHEET_ORDER 排序，未知分类追加到末尾 */
+function sortSheetsByOrder(sheets){
+  const known=sheets.filter(s=>SHEET_ORDER.includes(s));
+  const unknown=sheets.filter(s=>!SHEET_ORDER.includes(s));
+  known.sort((a,b)=>SHEET_ORDER.indexOf(a)-SHEET_ORDER.indexOf(b));
+  return [...known,...unknown];
+}
 function categorySheets(){
   var tree=window.__CATEGORY_TREE__;
   if(tree && Array.isArray(tree.sheets) && tree.sheets.length){
-    return tree.sheets.map(function(s){ return s.name; }).filter(Boolean);
+    return sortSheetsByOrder(tree.sheets.map(function(s){ return s.name; }).filter(Boolean));
   }
-  return [...new Set(data.map(x=>x.sheet))];
+  return sortSheetsByOrder([...new Set(data.map(x=>x.sheet))]);
 }
 function categorySubs(sheet){
   var tree=window.__CATEGORY_TREE__;
@@ -4553,7 +4572,7 @@ const DONUT_COLORS=['#0071e3','#34c759','#ff9f0a','#ff375f','#bf5af2','#5ac8fa',
 function renderDonut(){
   const isDemo=section==='demo';
   const universe=isDemo?demoUniverse():visibleUniverse();
-  const sheets=[...new Set(universe.map(x=>x.sheet))];
+  const sheets=sortSheetsByOrder([...new Set(universe.map(x=>x.sheet))]);
   const topics=isDemo?universe:[...new Map(universe.filter(x=>!x.isFollowUp).map(x=>[x.sheet+'||'+x.topic,x])).values()];
   const counts={}; sheets.forEach(s=>{ counts[s]=topics.filter(t=>t.sheet===s).length; });
   const entries=sheets.map(s=>[s, counts[s]||0]);
@@ -4643,6 +4662,7 @@ function getVisibleTopicGroups(){
   if(onlyFav) topics=topics.filter(x=>favorites.has(x.id));
   const q=document.getElementById('searchInput').value.trim().toLowerCase();
   if(q) topics=topics.filter(x=>searchHit((x.topic+x.question+x.answer+x.keywords+x.sheet+x.category), q));
+  topics.sort((a,b)=>(SHEET_ORDER.indexOf(a.sheet)-SHEET_ORDER.indexOf(b.sheet))||a.topic.localeCompare(b.topic,'zh'));
   return topics.map(t=>{
     const items=data.filter(x=>x.sheet===t.sheet&&x.topic===t.topic).sort((a,b)=>a.turn-b.turn);
     return {sheet:t.sheet,topic:t.topic,category:t.category,status:t.status,items};
@@ -4799,7 +4819,7 @@ function bindPanelEvents(){
 /* ---------- left nav ---------- */
 function renderNav(){
   const universe=visibleUniverse();
-  const sheets=[...new Set(universe.map(x=>x.sheet))];
+  const sheets=sortSheetsByOrder([...new Set(universe.map(x=>x.sheet))]);
   // 统一口径：「话术主题」= 工作表内不重复的「首轮」话术数量（不含追问轮次）
   const topicKey=x=>x.sheet+'||'+x.topic;
   const allTopics=new Set(universe.filter(x=>!x.isFollowUp).map(topicKey)).size;
@@ -4867,7 +4887,7 @@ function buildDetailHTML(it){
       ${isAdmin()? (it.status==='archived'
         ? `<button class="btn d-restore" data-id="${it.id}">${ICON_RESTORE} 恢复</button>`
         : `<button class="btn d-archive" data-id="${it.id}">${ICON_ARCHIVE} 下架</button>`) : ''}
-      ${isAdmin()? `<span class="d-move-ic">${ICON_MOVE}</span><select class="d-move" data-id="${it.id}"><option value="">移动到工作表…</option>${[...new Set(data.map(x=>x.sheet))].map(s=>`<option value="${esc(s)}" ${s===it.sheet?'selected':''}>${esc(s)}</option>`).join('')}</select>`:''}
+      ${isAdmin()? `<span class="d-move-ic">${ICON_MOVE}</span><select class="d-move" data-id="${it.id}"><option value="">移动到工作表…</option>${sortSheetsByOrder([...new Set(data.map(x=>x.sheet))]).map(s=>`<option value="${esc(s)}" ${s===it.sheet?'selected':''}>${esc(s)}</option>`).join('')}</select>`:''}
     </div>
     <div class="d-turns">
       ${group.map(g=>`
