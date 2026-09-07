@@ -4194,7 +4194,7 @@ function highlightQuery(text, q){
 }
 
 /* ---------- filters & derived ---------- */
-const sheetList=()=>['全部',...new Set(visibleUniverse().map(x=>x.sheet))];
+const sheetList=()=>['全部',...sortSheetsByOrder([...new Set(visibleUniverse().map(x=>x.sheet))])];
 const catList=()=>['全部',...new Set(visibleUniverse().filter(x=>activeSheet==='全部'||x.sheet===activeSheet).map(x=>x.category).filter(c=>c && c.trim()))];
 
 function visibleUniverse(){
