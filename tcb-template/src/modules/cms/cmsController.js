@@ -14,8 +14,8 @@ const db = require('../../utils/db')
 const { success, error } = require('../../utils/response')
 const ops = require('./cmsOpsController')
 
-const SCRIPT_COLS = 'id, category, sub_category, title, content, tags, rounds, status, sort, creator_id, create_time, update_time, on_shelf_time, department, store_id'
-const DEMO_COLS = 'id, category, title, description, content, status, sort, creator_id, create_time, update_time, department, store_id'
+const SCRIPT_COLS = 'id, category, sub_category, title, content, tags, rounds, status, sort, creator_id, create_time, update_time, on_shelf_time, department, store_id, is_deleted'
+const DEMO_COLS = 'id, category, title, description, content, status, sort, creator_id, create_time, update_time, department, store_id, is_deleted'
 
 /* 话术 content 分隔结构（与迁移/前端约定一致） */
 const Q_TAG = '【顾客问题】'
