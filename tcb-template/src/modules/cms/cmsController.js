@@ -50,10 +50,10 @@ function parseRounds(input) {
 async function categories(req, res) {
   try {
     const scriptRows = await db.query(
-      `SELECT DISTINCT category, sub_category FROM cms_script WHERE category IS NOT NULL AND category <> '' ORDER BY category, sub_category`
+      `SELECT DISTINCT category, sub_category FROM cms_script WHERE category IS NOT NULL AND category <> '' AND is_deleted = FALSE ORDER BY category, sub_category`
     )
     const demoRows = await db.query(
-      `SELECT category, content FROM cms_demo WHERE category IS NOT NULL AND category <> '' ORDER BY category`
+      `SELECT category, content FROM cms_demo WHERE category IS NOT NULL AND category <> '' AND is_deleted = FALSE ORDER BY category`
     )
     const sheetMap = {}
     scriptRows.forEach(function (r) {
@@ -129,6 +129,9 @@ function buildList(table, cols, likeCols, requireDepartment = false) {
         }
       }
 
+      /* P0 修复：所有 list 查询强制过滤已删除记录 */
+      cond.push(`is_deleted = FALSE`)
+
       if (!isAdmin) {
         cond.push(`status = 'published'`)
       } else if (status) {
@@ -196,7 +199,7 @@ function buildList(table, cols, likeCols, requireDepartment = false) {
   }
 }
 
-/** 详情（普通用户仅可查看 published） */
+/** 详情（普通用户仅可查看 published；P0：所有人不能查看已删除内容） */
 function buildDetail(table, cols) {
   return async function (req, res) {
     try {
@@ -204,7 +207,8 @@ function buildDetail(table, cols) {
       if (!id) return res.json(error('参数错误'))
       const row = await db.findOne(table, { id }, cols)
       if (!row) return res.json(error('内容不存在', 404))
-      if (req.user.role !== 'admin' && row.status !== 'published') return res.json(error('内容不存在', 404))
+      if (row.is_deleted) return res.json(error('内容不存在', 404))
+      if (req.user.role !== 'admin' && req.user.role !== 'super_admin' && row.status !== 'published') return res.json(error('内容不存在', 404))
       return res.json(success(row, '查询成功'))
     } catch (e) {
       return res.status(500).json(error('查询失败：' + e.message, 500))
@@ -309,9 +313,15 @@ async function scriptDelete(req, res) {
   try {
     const id = parseInt(req.params.id, 10)
     if (!id) return res.json(error('参数错误'))
-    const row = await db.findOne('cms_script', { id }, 'id, title')
-    await db.query('DELETE FROM cms_script WHERE id = $1', [id])
-    ops.addLog(req.user.id, req.user.username, 'delete', 'script', id, `删除话术「${row ? row.title : id}」`)
+    const row = await db.findOne('cms_script', { id }, 'id, title, is_deleted')
+    if (!row) return res.json(error('内容不存在'))
+    if (row.is_deleted) return res.json(error('内容已删除'))
+    /* P0 修复：软删除（is_deleted=TRUE），不再物理 DELETE */
+    await db.query(
+      `UPDATE cms_script SET is_deleted = TRUE, status = 'draft', update_time = CURRENT_TIMESTAMP WHERE id = $1`,
+      [id]
+    )
+    ops.addLog(req.user.id, req.user.username, 'delete', 'script', id, `删除话术「${row.title}」`)
     return res.json(success(null, '已删除'))
   } catch (e) {
     return res.status(500).json(error('删除失败：' + e.message, 500))
@@ -374,9 +384,15 @@ async function demoDelete(req, res) {
   try {
     const id = parseInt(req.params.id, 10)
     if (!id) return res.json(error('参数错误'))
-    const row = await db.findOne('cms_demo', { id }, 'id, title')
-    await db.query('DELETE FROM cms_demo WHERE id = $1', [id])
-    ops.addLog(req.user.id, req.user.username, 'delete', 'demo', id, `删除演示「${row ? row.title : id}」`)
+    const row = await db.findOne('cms_demo', { id }, 'id, title, is_deleted')
+    if (!row) return res.json(error('内容不存在'))
+    if (row.is_deleted) return res.json(error('内容已删除'))
+    /* P0 修复：软删除（is_deleted=TRUE），不再物理 DELETE */
+    await db.query(
+      `UPDATE cms_demo SET is_deleted = TRUE, status = 'draft', update_time = CURRENT_TIMESTAMP WHERE id = $1`,
+      [id]
+    )
+    ops.addLog(req.user.id, req.user.username, 'delete', 'demo', id, `删除演示「${row.title}」`)
     return res.json(success(null, '已删除'))
   } catch (e) {
     return res.status(500).json(error('删除失败：' + e.message, 500))
@@ -400,14 +416,15 @@ async function updateRow(table, data, id) {
 /** 数据看板统计（已登录用户可见，不限管理员） */
 async function stats(req, res) {
   try {
+    /* P0 修复：统计时排除已删除记录 */
     const s = await db.query(
-      `SELECT COUNT(*) AS total, COUNT(*) FILTER (WHERE status = 'published') AS published, COUNT(*) FILTER (WHERE status = 'draft') AS draft FROM cms_script`
+      `SELECT COUNT(*) AS total, COUNT(*) FILTER (WHERE status = 'published') AS published, COUNT(*) FILTER (WHERE status = 'draft') AS draft FROM cms_script WHERE is_deleted = FALSE`
     )
     const d = await db.query(
-      `SELECT COUNT(*) AS total, COUNT(*) FILTER (WHERE status = 'published') AS published, COUNT(*) FILTER (WHERE status = 'draft') AS draft FROM cms_demo`
+      `SELECT COUNT(*) AS total, COUNT(*) FILTER (WHERE status = 'published') AS published, COUNT(*) FILTER (WHERE status = 'draft') AS draft FROM cms_demo WHERE is_deleted = FALSE`
     )
     const cats = await db.query(
-      `SELECT category, COUNT(*) AS cnt FROM cms_script WHERE status = 'published' GROUP BY category ORDER BY cnt DESC`
+      `SELECT category, COUNT(*) AS cnt FROM cms_script WHERE status = 'published' AND is_deleted = FALSE GROUP BY category ORDER BY cnt DESC`
     )
     return res.json(success({
       scripts: s[0],
