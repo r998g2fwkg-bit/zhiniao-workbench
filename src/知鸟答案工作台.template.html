@@ -9729,18 +9729,22 @@ function applyAvatarToImg(imgEl, initEl, name, dept){
 
   function el(id) { return document.getElementById(id); }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
-  /* 统一时间 formatter：UTC 输入 → CST+8 → YYYY年M月D日 HH:mm */
+  /* 统一时间 formatter：数据库存的是 CST(+08:00) 墙钟 naive 字符串（如 2026-09-08 11:15:00 / 2026-09-08 11:20:52.716688）。
+     确定性解析：直接从字符串提取年月日时分，不依赖浏览器本地时区，杜绝 +8h/+16h 二次偏移。
+     输出格式与历史一致：YYYY年MM月DD日 HH:mm */
   function fmtDateCST(s) {
     if (!s || s === 'null' || s === 'undefined') return '—';
+    var str = String(s);
+    // 仅对「无时区标记的 naive CST 墙钟」做确定性解析；带 Z / +hh:mm 等标记的值不在此类输入内，交给下方 Date 兜底
+    var m = /^(\d{4})-(\d{1,2})-(\d{1,2})[T ](\d{1,2}):(\d{2})/.exec(str);
+    if (m && !/[zZ]|[+-]\d{2}:?\d{2}(\s|$)/.test(str)) {
+      var p = function (n) { return (n < 10 ? '0' : '') + n; };
+      return m[1] + '年' + p(parseInt(m[2], 10)) + '月' + p(parseInt(m[3], 10)) + '日 ' + p(parseInt(m[4], 10)) + ':' + p(parseInt(m[5], 10));
+    }
     var d = new Date(s);
-    if (isNaN(d.getTime())) return String(s);
-    // 数据库存 UTC，JS Date 自动转本地时间。
-    // 若浏览器是 CST(UTC+8)，d 已是本地时间，无需额外补偿。
-    // 若浏览器在其他时区，需手动偏移：d.setHours(d.getHours() + (8 - d.getTimezoneOffset() / 60))
-    var offset = 8 - d.getTimezoneOffset() / 60;
-    d.setHours(d.getHours() + offset);
-    var p = function (n) { return (n < 10 ? '0' : '') + n; };
-    return d.getFullYear() + '年' + p(d.getMonth() + 1) + '月' + p(d.getDate()) + '日 ' + p(d.getHours()) + ':' + p(d.getMinutes());
+    if (isNaN(d.getTime())) return str;
+    var p2 = function (n) { return (n < 10 ? '0' : '') + n; };
+    return d.getFullYear() + '年' + p2(d.getMonth() + 1) + '月' + p2(d.getDate()) + '日 ' + p2(d.getHours()) + ':' + p2(d.getMinutes());
   }
   /* 兼容别名：旧调用点使用 fmtDate，统一转发到 fmtDateCST，避免 ReferenceError */
   function fmtDate(s) { return fmtDateCST(s); }
