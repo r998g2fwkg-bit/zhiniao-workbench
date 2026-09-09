@@ -9750,19 +9750,32 @@ function applyAvatarToImg(imgEl, initEl, name, dept){
   function fmtDate(s) { return fmtDateCST(s); }
   function toast(msg) { if (typeof showToast === 'function') showToast(msg); }
 
+  /* 用户管理「门店」筛选：与门店管理同源（sys_store 真源，经 store 管理器已暴露的 window.getStores 读取）。
+     旧实现从 state.list（首页用户的 department）提取 → 无用户/不在首页的门店会消失，测试 department
+     （如 DETAILFIX_TEST_DEPT）会被误当门店。现改为复用门店主数据；value=门店名（与后端
+     /api/user/list department ILIKE 匹配口径一致，勿改成 store_id）。翻页/用户筛选不重建，切回本页时重建。 */
   function buildDeptFilter() {
     var sel = el('acDeptFilter');
     if (!sel) return;
-    var existing = new Set();
-    state.list.forEach(function(u) { if (u.department) existing.add(u.department); });
-    // 如果已有数据，用 API 返回的门店列表；否则用默认列表
-    var depts = Array.from(existing).sort();
+    var current = sel.value || '';
+    var stores = (typeof window.getStores === 'function') ? (window.getStores() || []) : [];
     sel.innerHTML = '<option value="">全部门店</option>';
-    depts.forEach(function(d) {
+    stores.forEach(function (s) {
+      var o = (typeof window.storeObj === 'function') ? window.storeObj(s) : s;
+      if (!o) return;
+      var name = String(o.name == null ? '' : o.name);
+      if (!name) return;
+      if (o.status && o.status !== 'active') return;   // 仅展示有效门店（与编辑弹窗 acFDept 一致）
       var opt = document.createElement('option');
-      opt.value = d; opt.textContent = d;
+      opt.value = name; opt.textContent = name;
       sel.appendChild(opt);
     });
+    // 保留当前选中（若仍在列表中）
+    if (current) {
+      var kept = false;
+      for (var si = 0; si < sel.options.length; si++) { if (sel.options[si].value === current) { kept = true; break; } }
+      if (!kept) sel.value = '';
+    }
   }
   function load() {
     var qs = 'page=' + state.page + '&pageSize=' + state.pageSize;
@@ -9780,7 +9793,6 @@ function applyAvatarToImg(imgEl, initEl, name, dept){
       }
       state.list = j.data.list || [];
       state.total = j.data.total || 0;
-      if (!state._deptListPopulated) { buildDeptFilter(); state._deptListPopulated = true; }
       render();
     }).catch(function () {});
   }
@@ -11449,7 +11461,7 @@ function onRowAction(e) {
     if (group && (page === 'scripts' || page === 'demos' || page === 'aep') && group.classList.contains('collapsed')) group.classList.remove('collapsed');
     if (page === 'dash') loadDash();
     else if (page === 'stores') { if (typeof window.__acLoadStores === 'function') { window.__acLoadStores(); } }
-    else if (page === 'users') load();
+    else if (page === 'users') { buildDeptFilter(); load(); }
     else if (page === 'applies') loadApplications();
     else if (page === 'scripts') loadScripts();
     else if (page === 'demos') loadDemos();
