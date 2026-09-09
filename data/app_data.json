@@ -3902,33 +3902,7 @@
       ]
     }
   ],
-  "NOTICES": [
-    {
-      "id": "n20260811-453",
-      "level": "important",
-      "date": "2026-08-11",
-      "sticky": false,
-      "title": "两个功能更新",
-      "body": "1）原「Coach 薪资计算器」已更名为「激励计算器」，整合进 Ai Coach & Demo 工作台（左侧菜单可进）。因薪资保密，每位仅可看所属门店的激励数据，PIN 码默认为手机号后四位。\n\n2）月考模式新增「BUG 提交指引」：考试遇卡顿 BUG 时，在粘贴题目清单区域下方展开该指引。\n\n有问题随时群里喊我～"
-    },
-    {
-      "id": "n20260813-834",
-      "level": "normal",
-      "date": "2026-08-13",
-      "sticky": false,
-      "title": "AiDemo 图片校对",
-      "body": "😁家人们，现在已经对所有演示话术的图片都校对完成，可以朗读话术的同时对照演示图完成测试。（部署链路自动化验证 2026-08-26）"
-    },
-    {
-      "id": "n20260820-712",
-      "level": "important",
-      "date": "2026-08-20",
-      "sticky": true,
-      "title": "「课时追踪」重新上线",
-      "body": "课时追踪功能已完成课程合并与界面优化，现重新在工作台顶部标签开放。\n\n使用方式：进入 MyCoach → Coach Workstation → 拷贝当天所有服务记录，粘贴到「课时追踪」录入区；休息单独标记。\n\n当前为 8 月数据，请按实际排班与剩余上班日调整目标规划。",
-      "image": "assets/notices/notice-hours-tracker-v2.jpg"
-    }
-  ],
+  "NOTICES": [],
   "AEP_WEEKLY": [
     {
       "weekId": "Q4W8",
